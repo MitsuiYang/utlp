@@ -18,7 +18,7 @@ RTL_SRC := rtl/pcie/support/pcie3_7x_0_pipe_clock.v \
            rtl/top.v
 
 ## libraries
-INC_SRC := $(wildcard cores/pkg/*.sv)
+INC_SRC := $(wildcard ../../cores/pkg/*.sv)
 #INC_SRC := $(wildcard ../../cores/pkg/*.sv) \
 #           $(wildcard ../../cores/xgmiisync/rtl/*.sv) \
 #           $(wildcard ../../cores/crc32/rtl/*.v) \
