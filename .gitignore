@@ -92,4 +92,4 @@
 !*.sh
 !Makefile
 !*.xcix
-
+!README.*
