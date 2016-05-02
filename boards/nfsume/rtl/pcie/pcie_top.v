@@ -1,7 +1,7 @@
-`include "setup.v"
+`include "../setup.v"
 `timescale 1ps / 1ps
 (* DowngradeIPIdentifiedWarnings = "yes" *)
-module top # (
+module pcie_top # (
 	parameter          PL_SIM_FAST_LINK_TRAINING           = "FALSE",      // Simulation Speedup
 	parameter          PCIE_EXT_CLK                        = "TRUE", // Use External Clocking Module
 	parameter          PCIE_EXT_GT_COMMON                  = "FALSE", // Use External GT COMMON Module

@@ -13,8 +13,8 @@ set device xc7vx690t-3-ffg1761
 set outdir build
 
 # Project Settings
-create_project -part ${device} -in_memory
-#create_project -name pemu_top -force -part ${device}
+#create_project -part ${device} -in_memory
+create_project -name pemu_top -force -part ${device}
 
 set_property target_language Verilog [current_project]
 set_property default_lib work [current_project]

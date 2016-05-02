@@ -14,8 +14,9 @@ RTL_SRC := rtl/pcie/support/pcie3_7x_0_pipe_clock.v \
            rtl/pcie/PIO_INTR_CTRL.v                 \
            rtl/pcie/PIO_EP.v                        \
            rtl/pcie/PIO.v                           \
-           rtl/biosrom.v                            \
-           rtl/top.v
+           rtl/pcie/pcie_top.v                      \
+           rtl/bios/biosrom.v                       \
+           rtl/top.sv
 
 ## libraries
 INC_SRC := $(wildcard ../../cores/pkg/*.sv)
