@@ -33,7 +33,7 @@ INC_SRC := $(wildcard ../../cores/pkg/*.sv)
 IP_SRC := ip_catalog/pcie3_7x_0/pcie3_7x_0.xci
 
 XDC_SRC := constraints/sume.xdc \
-           constraints/xilinx_pcie3_7x_ep_x8g3_VC709.xdc
+           constraints/sume-pcie.xdc
 
 TCL_SRC := scripts/vivado_synth.tcl \
            scripts/vivado_place.tcl \
