@@ -252,15 +252,6 @@ assign sys_rst = (cold_reset | ~user_lnk_up | user_reset);
   // ref_clk IBUFDS from the edge connector
   IBUFDS_GTE2 refclk_ibuf (.O(sys_clk), .ODIV2(), .I(sys_clk_p), .CEB(1'b0), .IB(sys_clk_n));
 
-
-    // LED's enabled for Reference Board design
-`ifdef macchan
-    OBUF   led_0_obuf (.O(led[0]), .I(sys_rst_n_c));
-    OBUF   led_1_obuf (.O(led[1]), .I(!user_reset));
-    OBUF   led_2_obuf (.O(led[2]), .I(user_lnk_up));
-    OBUF   led_3_obuf (.O(led[3]), .I(user_clk_heartbeat[25]));
-`endif
-
   // Create a Clock Heartbeat
   always @(posedge user_clk) begin
     if(!sys_rst_n_c) begin
