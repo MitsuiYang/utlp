@@ -30,14 +30,20 @@ INC_SRC := $(wildcard ../../cores/pkg/*.sv)
 
 #VERILATOR_SRC := test/app_tb.cpp
 
-IP_SRC := ip_catalog/pcie3_7x_0/pcie3_7x_0.xci
+IP_SRC := ip_catalog/pcie3_7x_0/pcie3_7x_0.xci \
+          ip_catalog/axi_10g_ethernet_0/axi_10g_ethernet_0.xci    \
+          ip_catalog/axi_10g_ethernet_1/axi_10g_ethernet_1.xci    \
+          ip_catalog/pcie2eth_fifo/pcie2eth_fifo.xci         \
+          ip_catalog/si5324_regs_rom/si5324_regs_rom.xcix
 
-XDC_SRC := constraints/sume.xdc \
+XDC_SRC := constraints/sume.xdc      \
            constraints/sume-pcie.xdc
+#           constraints/sume-pcie.xdc \
+#           constraints/sume-eth.xdc 
 
-TCL_SRC := scripts/vivado_synth.tcl \
-           scripts/vivado_place.tcl \
-           scripts/vivado_route.tcl \
+TCL_SRC := scripts/vivado_synth.tcl      \
+           scripts/vivado_place.tcl      \
+           scripts/vivado_route.tcl      \
            scripts/vivado_bitstream.tcl
 
 
