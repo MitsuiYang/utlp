@@ -39,8 +39,8 @@ module pcie_top # (
 	input                                           sys_clk_n,
 	input                                           sys_rst_n,
 
-        input wire clk200_p,
-        input wire clk200_n,
+        input wire FPGA_SYSCLK_P,
+        input wire FPGA_SYSCLK_N,
         output wire [7:0] led
 );
 
@@ -214,8 +214,8 @@ module pcie_top # (
 // Clock and Reset
 wire clk200;
 IBUFDS IBUFDS_clk200 (
-        .I(clk200_p),
-        .IB(clk200_n),
+        .I(FPGA_SYSCLK_P),
+        .IB(FPGA_SYSCLK_N),
         .O(clk200)
 );
 

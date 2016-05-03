@@ -13,8 +13,8 @@ module top #(
 	input wire sys_clk_n,
 	input wire sys_rst_n,
 
-	input wire clk200_p,
-	input wire clk200_n,
+	input wire FPGA_SYSCLK_P,
+	input wire FPGA_SYSCLK_N,
 
 	output wire [7:0] led
 );
