@@ -36,9 +36,16 @@ module top #(
 	output wire ETH1_TX_DISABLE
 );
 
+wire clk200;
+IBUFDS IBUFDS_clk200 (
+        .I(FPGA_SYSCLK_P),
+        .IB(FPGA_SYSCLK_N),
+        .O(clk200)
+);
+
 pcie_top pcie_top0 (.*);
 
-//eth_top eth1_top (.*);
+eth_top eth1_top (.*);
 
 endmodule
 

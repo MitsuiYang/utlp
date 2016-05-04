@@ -39,9 +39,8 @@ module pcie_top # (
 	input                                           sys_clk_n,
 	input                                           sys_rst_n,
 
-        input wire FPGA_SYSCLK_P,
-        input wire FPGA_SYSCLK_N,
-        output wire [7:0] led
+	input wire clk200,
+	output wire [7:0] led
 );
 
   // Local Parameters derived from user selection
@@ -211,17 +210,8 @@ module pcie_top # (
   wire                              [2:0]    cfg_interrupt_msi_function_number;
 
 
-// Clock and Reset
-wire clk200;
-IBUFDS IBUFDS_clk200 (
-        .I(FPGA_SYSCLK_P),
-        .IB(FPGA_SYSCLK_N),
-        .O(clk200)
-);
-
 reg [7:0] cold_counter = 8'h0;
 reg cold_reset = 1'b0;
-
 always @(posedge clk200) begin
         if (cold_counter != 8'hff) begin
                 cold_reset <= 1'b1;

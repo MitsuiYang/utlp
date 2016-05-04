@@ -3,12 +3,9 @@ set_property CFGBVS GND [current_design]
 set_property CONFIG_VOLTAGE 1.8 [current_design]
 
 # FPGA_SYSCLK (200MHz)
-set_property VCCAUX_IO DONTCARE [get_ports FPGA_SYSCLK_P]
-set_property IOSTANDARD DIFF_SSTL15 [get_ports FPGA_SYSCLK_P]
-set_property IOSTANDARD DIFF_SSTL15 [get_ports FPGA_SYSCLK_N]
-set_property PACKAGE_PIN H19 [get_ports FPGA_SYSCLK_P]
-set_property PACKAGE_PIN G18 [get_ports FPGA_SYSCLK_N]
-create_clock -period 5.000 -name sys_clk_pin -waveform {0.000 2.500} -add [get_ports FPGA_SYSCLK_P]
+set_property -dict { PACKAGE_PIN G18   IOSTANDARD LVDS     } [get_ports { FPGA_SYSCLK_N }];
+set_property -dict { PACKAGE_PIN H19   IOSTANDARD LVDS     } [get_ports { FPGA_SYSCLK_P }];
+create_clock -add -name sys_clk_pin -period 5.00 -waveform {0 2.5} [get_ports {FPGA_SYSCLK_P}]; 
 
 # I2C
 set_property SLEW SLOW [get_ports I2C_FPGA_SCL]

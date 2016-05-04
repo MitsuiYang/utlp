@@ -28,7 +28,8 @@ read_xdc ${XDC_SRC}
 puts "INFO: Import IP Sources ..."
 foreach file $IP_SRC {
 	read_ip $file
-	synth_ip -force [get_files $file]
+#	synth_ip -force [get_files $file]
+	synth_ip [get_files $file]
 }
 
 puts "INFO: Import RTL Sources ..."

@@ -16,17 +16,17 @@ RTL_SRC := rtl/pcie/support/pcie3_7x_0_pipe_clock.v                          \
            rtl/pcie/PIO.v                                                    \
            rtl/pcie/pcie_top.v                                               \
            rtl/bios/biosrom.v                                                \
+           rtl/SFP_CLK_INIT_rtl/i2c/trunk/rtl/verilog/i2c_master_bit_ctrl.v  \
+           rtl/SFP_CLK_INIT_rtl/pkg_clk_init_engine.vhd                      \
+           rtl/SFP_CLK_INIT_rtl/i2c/trunk/rtl/verilog/i2c_master_byte_ctrl.v \
+           rtl/SFP_CLK_INIT_rtl/clk_init_engine.vhd                          \
+           rtl/SFP_CLK_INIT_rtl/i2c/trunk/rtl/verilog/i2c_master_top.v       \
+           rtl/SFP_CLK_INIT_rtl/sfp_refclk_init.vhd                          \
+           rtl/eth/pcs_pma_conf.v                                            \
+           rtl/eth/eth_mac_conf.v                                            \
+           rtl/eth/eth_send.sv                                               \
+           rtl/eth/eth_top.sv                                                \
            rtl/top.sv
-#           rtl/SFP_CLK_INIT_rtl/i2c/trunk/rtl/verilog/i2c_master_bit_ctrl.v  \
-#           rtl/SFP_CLK_INIT_rtl/pkg_clk_init_engine.vhd                      \
-#           rtl/SFP_CLK_INIT_rtl/i2c/trunk/rtl/verilog/i2c_master_byte_ctrl.v \
-#           rtl/SFP_CLK_INIT_rtl/clk_init_engine.vhd                          \
-#           rtl/SFP_CLK_INIT_rtl/i2c/trunk/rtl/verilog/i2c_master_top.v       \
-#           rtl/SFP_CLK_INIT_rtl/sfp_refclk_init.vhd                          \
-#           rtl/eth/pcs_pma_conf.v                                            \
-#           rtl/eth/eth_mac_conf.v                                            \
-#           rtl/eth/eth_send.sv                                               \
-#           rtl/eth/eth_top.sv                                                \
 
 ## libraries
 INC_SRC := $(wildcard ../../cores/pkg/*.sv)
@@ -40,12 +40,12 @@ INC_SRC := $(wildcard ../../cores/pkg/*.sv)
 
 #VERILATOR_SRC := test/app_tb.cpp
 
-IP_SRC := ip_catalog/pcie3_7x_0/pcie3_7x_0.xci
-#IP_SRC := ip_catalog/pcie3_7x_0/pcie3_7x_0.xci \
-#          ip_catalog/axi_10g_ethernet_0/axi_10g_ethernet_0.xci    \
-#          ip_catalog/axi_10g_ethernet_1/axi_10g_ethernet_1.xci    \
-#          ip_catalog/pcie2eth_fifo/pcie2eth_fifo.xci         \
-#          ip_catalog/si5324_regs_rom/si5324_regs_rom.xcix
+#IP_SRC := ip_catalog/pcie3_7x_0/pcie3_7x_0.xci
+IP_SRC := ip_catalog/pcie3_7x_0/pcie3_7x_0.xci \
+          ip_catalog/axi_10g_ethernet_0/axi_10g_ethernet_0.xci    \
+          ip_catalog/axi_10g_ethernet_1/axi_10g_ethernet_1.xci    \
+          ip_catalog/pcie2eth_fifo/pcie2eth_fifo.xci         \
+          ip_catalog/si5324_regs_rom/si5324_regs_rom.xcix
 
 XDC_SRC := constraints/sume.xdc      \
            constraints/sume-pcie.xdc \
