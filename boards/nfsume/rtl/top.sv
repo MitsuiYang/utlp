@@ -36,13 +36,34 @@ module top #(
 	output wire ETH1_TX_DISABLE
 );
 
+// clk200
 wire clk200;
 IBUFDS IBUFDS_clk200 (
-        .I(FPGA_SYSCLK_P),
-        .IB(FPGA_SYSCLK_N),
-        .O(clk200)
+	.I(FPGA_SYSCLK_P),
+	.IB(FPGA_SYSCLK_N),
+	.O(clk200)
 );
 
+// cold_reset
+logic cold_reset;
+logic [13:0] cold_counter;
+always_ff @(posedge clk200) begin
+	if (cold_counter != 14'h3fff) begin
+		cold_reset <= 1'b1;
+		cold_counter <= cold_counter + 14'd1;
+	end else
+		cold_reset <= 1'b0;
+end
+
+
+/*
+wire [C_DATA_WIDTH-1:0] m_axis_cq_tdata;
+wire             [84:0] m_axis_cq_tuser;
+wire                    m_axis_cq_tlast;
+wire   [KEEP_WIDTH-1:0] m_axis_cq_tkeep;
+wire                    m_axis_cq_tvalid;
+wire             [21:0] m_axis_cq_tready;
+*/
 pcie_top pcie_top0 (.*);
 
 eth_top eth1_top (.*);

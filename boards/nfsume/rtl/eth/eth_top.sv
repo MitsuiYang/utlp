@@ -1,7 +1,8 @@
 `timescale 1ns / 1ps
 
 module eth_top (
-	input  logic clk200,
+	input logic clk200,
+	input logic cold_reset,
 
 	input  logic SFP_CLK_P,
 	input  logic SFP_CLK_N,
@@ -23,6 +24,8 @@ module eth_top (
 	output logic ETH1_TX_DISABLE
 );
 
+wire sys_rst = cold_reset;
+
 logic clk100, clk156;
 logic [1:0] clock_divide;
 always_ff @(posedge clk200)
@@ -31,19 +34,6 @@ BUFG buffer_clk100 (
 	.I(clock_divide[0]),
 	.O(clk100)
 );
-
-// sys_rst
-logic sys_rst;
-logic [13:0] cold_counter;
-logic cold_reset;
-always_ff @(posedge clk200) begin
-	if (cold_counter != 14'd16383) begin
-		cold_reset <= 1'b1;
-		cold_counter <= cold_counter + 14'd1;
-	end else
-		cold_reset <= 1'b0;
-end
-always_comb sys_rst = cold_reset;
 
 
 // sfp_refclk_init

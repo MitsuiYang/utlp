@@ -30,17 +30,28 @@ module pcie_top # (
 	parameter          AXISTEN_IF_ENABLE_RX_MSG_INTFC = 0,
 	parameter   [17:0] AXISTEN_IF_ENABLE_MSG_ROUTE    = 18'h2FFFF
 ) (
-	output  [(PL_LINK_CAP_MAX_LINK_WIDTH - 1) : 0]  pci_exp_txp,
-	output  [(PL_LINK_CAP_MAX_LINK_WIDTH - 1) : 0]  pci_exp_txn,
-	input   [(PL_LINK_CAP_MAX_LINK_WIDTH - 1) : 0]  pci_exp_rxp,
-	input   [(PL_LINK_CAP_MAX_LINK_WIDTH - 1) : 0]  pci_exp_rxn,
+	output wire [(PL_LINK_CAP_MAX_LINK_WIDTH - 1) : 0]  pci_exp_txp,
+	output wire [(PL_LINK_CAP_MAX_LINK_WIDTH - 1) : 0]  pci_exp_txn,
+	input  wire [(PL_LINK_CAP_MAX_LINK_WIDTH - 1) : 0]  pci_exp_rxp,
+	input  wire [(PL_LINK_CAP_MAX_LINK_WIDTH - 1) : 0]  pci_exp_rxn,
 
-	input                                           sys_clk_p,
-	input                                           sys_clk_n,
-	input                                           sys_rst_n,
+	input wire sys_clk_p,
+	input wire sys_clk_n,
+	input wire sys_rst_n,
 
 	input wire clk200,
+	input wire cold_reset,
 	output wire [7:0] led
+
+	/*
+	// RX_ENGINE
+	output wire [C_DATA_WIDTH-1:0] m_axis_cq_tdata,
+	output wire             [84:0] m_axis_cq_tuser,
+	output wire                    m_axis_cq_tlast,
+	output wire   [KEEP_WIDTH-1:0] m_axis_cq_tkeep,
+	output wire                    m_axis_cq_tvalid,
+	output wire             [21:0] m_axis_cq_tready
+	*/
 );
 
   // Local Parameters derived from user selection
@@ -210,19 +221,7 @@ module pcie_top # (
   wire                              [2:0]    cfg_interrupt_msi_function_number;
 
 
-reg [7:0] cold_counter = 8'h0;
-reg cold_reset = 1'b0;
-always @(posedge clk200) begin
-        if (cold_counter != 8'hff) begin
-                cold_reset <= 1'b1;
-                cold_counter <= cold_counter + 8'd1;
-        end else
-                cold_reset <= 1'b0;
-end
-
-wire sys_rst;
-
-assign sys_rst = (cold_reset | ~user_lnk_up | user_reset);
+wire sys_rst = (cold_reset | ~user_lnk_up | user_reset);
 
 
   //----------------------------------------------------------------------------------------------------------------//
