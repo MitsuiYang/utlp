@@ -5,11 +5,11 @@ module pcie_top # (
 	parameter          PL_SIM_FAST_LINK_TRAINING           = "FALSE",      // Simulation Speedup
 	parameter          PCIE_EXT_CLK                        = "TRUE", // Use External Clocking Module
 	parameter          PCIE_EXT_GT_COMMON                  = "FALSE", // Use External GT COMMON Module
-	parameter          C_DATA_WIDTH                        = 256,         // RX/TX interface data width
+	parameter          C_DATA_WIDTH                        = 64,         // RX/TX interface data width
 	parameter          KEEP_WIDTH                          = C_DATA_WIDTH / 32,
  // parameter          EXT_PIPE_SIM                        = "FALSE",  // This Parameter has effect on selecting Enable External PIPE Interface in GUI.
 	parameter          PL_LINK_CAP_MAX_LINK_SPEED          = 4,  // 1- GEN1, 2 - GEN2, 4 - GEN3
-	parameter          PL_LINK_CAP_MAX_LINK_WIDTH          = 8,  // 1- X1, 2 - X2, 4 - X4, 8 - X8
+	parameter          PL_LINK_CAP_MAX_LINK_WIDTH          = 2,  // 1- X1, 2 - X2, 4 - X4, 8 - X8
   // USER_CLK2_FREQ = AXI Interface Frequency
   //   0: Disable User Clock
   //   1: 31.25 MHz
