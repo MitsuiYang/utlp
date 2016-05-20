@@ -59,9 +59,9 @@
 `timescale 1ps/1ps
 
 module pcie3_7x_0_support # (
-  parameter PL_LINK_CAP_MAX_LINK_WIDTH = 8,                       // PCIe Lane Width
+  parameter PL_LINK_CAP_MAX_LINK_WIDTH = 2,                       // PCIe Lane Width
   parameter CLK_SHARING_EN             = "FALSE",                 // Enable Clock Sharing
-  parameter C_DATA_WIDTH               = 256,                     // AXI interface data width
+  parameter C_DATA_WIDTH               = 64,                     // AXI interface data width
   parameter KEEP_WIDTH                 = C_DATA_WIDTH / 8,        // TSTRB width
   parameter PCIE_REFCLK_FREQ           = 0,                       // PCIe Reference Clock Frequency
   parameter PCIE_USERCLK1_FREQ         = 2,                       // PCIe Core Clock Frequency - Core Clock Freq

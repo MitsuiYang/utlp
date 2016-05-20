@@ -2,7 +2,7 @@
 `timescale 1ps / 1ps
 
 module top #(
-	parameter PL_LINK_CAP_MAX_LINK_WIDTH = 8
+	parameter PL_LINK_CAP_MAX_LINK_WIDTH = 2
 )(
 	input wire FPGA_SYSCLK_P,
 	input wire FPGA_SYSCLK_N,
