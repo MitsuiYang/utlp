@@ -2,6 +2,7 @@
 
 module eth_top (
 	input logic clk200,
+	input logic clk100,
 	input logic cold_reset,
 
 	input  logic SFP_CLK_P,
@@ -26,15 +27,7 @@ module eth_top (
 
 wire sys_rst = cold_reset;
 
-logic clk100, clk156;
-logic [1:0] clock_divide;
-always_ff @(posedge clk200)
-	clock_divide <= clock_divide + 2'b1;
-BUFG buffer_clk100 (
-	.I(clock_divide[0]),
-	.O(clk100)
-);
-
+logic clk156;
 
 // sfp_refclk_init
 sfp_refclk_init sfp_refclk_init0 (

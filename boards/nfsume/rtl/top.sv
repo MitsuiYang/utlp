@@ -44,6 +44,16 @@ IBUFDS IBUFDS_clk200 (
 	.O(clk200)
 );
 
+// clk100
+wire clk100;
+logic [1:0] clock_divide;
+always_ff @(posedge clk200)
+	clock_divide <= clock_divide + 2'b1;
+BUFG buffer_clk100 (
+	.I(clock_divide[0]),
+	.O(clk100)
+);
+
 // cold_reset
 logic cold_reset;
 logic [13:0] cold_counter;
