@@ -78,13 +78,12 @@ eth_send eth_send0 (
 	.*
 );
 
-wire        m_axis_tx_tvalid;
-wire        m_axis_tx_tready;
-wire [63:0] m_axis_tx_tdata;
-wire [ 7:0] m_axis_tx_tkeep;
-wire        m_axis_tx_tlast;
-wire        m_axis_tx_tuser;
-
+wire        m_axis_noencap_tvalid;
+wire        m_axis_noencap_tready;
+wire [63:0] m_axis_noencap_tdata;
+wire [ 7:0] m_axis_noencap_tkeep;
+wire        m_axis_noencap_tlast;
+wire        m_axis_noencap_tuser;
 pcie2eth_fifo pcie2eth_fifo0 (
 	.s_aresetn(~sys_rst),
 
@@ -99,13 +98,39 @@ pcie2eth_fifo pcie2eth_fifo0 (
 
 	// data out(eth)
 	.m_aclk(clk156),
+	.m_axis_tvalid(m_axis_noencap_tvalid),
+	.m_axis_tready(m_axis_noencap_tready),
+	.m_axis_tdata (m_axis_noencap_tdata),
+	.m_axis_tkeep (m_axis_noencap_tkeep),
+	.m_axis_tlast (m_axis_noencap_tlast),
+	.m_axis_tuser (m_axis_noencap_tuser),
+	.*
+);
+
+wire        m_axis_tx_tvalid;
+wire        m_axis_tx_tready;
+wire [63:0] m_axis_tx_tdata;
+wire [ 7:0] m_axis_tx_tkeep;
+wire        m_axis_tx_tlast;
+wire        m_axis_tx_tuser;
+eth_encap eth_encap0 (
+	.clk156(clk156),
+
+	// data in
+	.s_axis_tvalid(m_axis_noencap_tvalid),
+	.s_axis_tready(m_axis_noencap_tready),
+	.s_axis_tdata (m_axis_noencap_tdata),
+	.s_axis_tkeep (m_axis_noencap_tkeep),
+	.s_axis_tlast (m_axis_noencap_tlast),
+	.s_axis_tuser (m_axis_noencap_tuser),
+
+	// data out(encap)
 	.m_axis_tvalid(m_axis_tx_tvalid),
 	.m_axis_tready(m_axis_tx_tready),
 	.m_axis_tdata (m_axis_tx_tdata),
 	.m_axis_tkeep (m_axis_tx_tkeep),
 	.m_axis_tlast (m_axis_tx_tlast),
-	.m_axis_tuser (m_axis_tx_tuser),
-	.*
+	.m_axis_tuser (m_axis_tx_tuser)
 );
 
 axi_10g_ethernet_0 axi_10g_ethernet_0_ins (
