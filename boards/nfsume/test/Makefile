@@ -18,7 +18,7 @@ RTL_SRC := $(wildcard ../../../cores/pkg/*.sv)  \
 
 WFLAGS = -Wno-PINCONNECTEMPTY
 
-all: sim
+all: run
 
 lint: $(SIM_SRC) $(RTL_SRC)
 	verilator $(WFLAGS) -Wall --lint-only --cc --top-module $(sim_top) -sv $(SIM_SRC) $(RTL_SRC)
@@ -27,8 +27,7 @@ sim: $(VERILATOR_SRC) $(SIM_SRC) $(RTL_SRC)
 	verilator $(WFLAGS) -DSIMULATION --cc --trace --top-module $(sim_top) -sv $(SIM_SRC) $(RTL_SRC) --exe $(VERILATOR_SRC)
 	make -j -C obj_dir/ -f V$(sim_top).mk V$(sim_top)
 
-.PHONY: run
-run: obj_dir/V$(sim_top)
+run: sim obj_dir/V$(sim_top)
 	obj_dir/V$(sim_top)
 
 .PHONY: clean
