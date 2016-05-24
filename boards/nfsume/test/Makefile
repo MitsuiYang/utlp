@@ -1,51 +1,38 @@
-VIVADOPATH := /opt/Xilinx/Vivado/2014.4
+sim_top = testbench
 
-VLOG_SRCS := $(wildcard ../rtl/pcie/support/*.v)
-VLOG_SRCS += $(wildcard ../rtl/pcie/*.v)
-VLOG_SRCS += $(wildcard ../rtl/*.v)
-SVLOG_SRCS := $(wildcard ../rtl/*.sv)
-SVLOG_SRCS += testbench.sv
+VERILATOR_SRC := sim_main.cpp
 
+SIM_SRC := testbench.sv
+RTL_SRC := $(wildcard ../../../cores/pkg/*.sv)  \
+           graycounter.v                        \
+           asfifo.v                             \
+           pcie2eth_fifo.sv                     \
+           axi_10g_ethernet_0.sv                \
+           sfp_refclk_init.sv                   \
+           ../rtl/eth/pcs_pma_conf.v            \
+           ../rtl/eth/eth_mac_conf.v            \
+           ../rtl/eth/eth_send.sv               \
+           ../rtl/eth/eth_tlptap.sv             \
+           ../rtl/eth/eth_encap.sv              \
+           ../rtl/eth/eth_top.sv
 
-XVLOG_OPTS := -m64 -d SIMULATION
+WFLAGS = -Wno-PINCONNECTEMPTY
 
-XELAB_OPTS := -m64 --debug typical
-XELAB_OPTS += -L xil_defaultlib -L unisims_ver -L unimacro_ver -L secureip
-XELAB_OPTS += --snapshot pcie_mmio_sim
-XELAB_OPTS += -d SIMULATION
-XELAB_OPTS += -timescale "1ps/1ps"
+all: sim
 
-XSIM_OPTS := -nolog -t run.tcl
+lint: $(SIM_SRC) $(RTL_SRC)
+	verilator $(WFLAGS) -Wall --lint-only --cc --top-module $(sim_top) -sv $(SIM_SRC) $(RTL_SRC)
 
-XVLOG := xvlog
-XELAB := xelab
-XSIM := xsim
-GTKWAVE := gtkwave
+sim: $(VERILATOR_SRC) $(SIM_SRC) $(RTL_SRC)
+	verilator $(WFLAGS) -DSIMULATION --cc --trace --top-module $(sim_top) -sv $(SIM_SRC) $(RTL_SRC) --exe $(VERILATOR_SRC)
+	make -j -C obj_dir/ -f V$(sim_top).mk V$(sim_top)
 
-default: xsim
-
-xvlog:
-	@cp pcie_7x_0_vlog.prj sim_vlog.prj
-	@for src in $(VLOG_SRCS); do echo "verilog xil_defaultlib \"$$src\""; done >> sim_vlog.prj
-	@for src in $(SVLOG_SRCS); do echo "sv xil_defaultlib \"$$src\""; done >> sim_vlog.prj
-	@echo 'verilog xil_defaultlib "$(VIVADOPATH)/data/verilog/src/glbl.v"' >> sim_vlog.prj
-	$(XVLOG) $(XVLOG_OPTS) -prj sim_vlog.prj
-
-xelab: xvlog
-	$(XELAB) $(XELAB_OPTS) xil_defaultlib.testbench xil_defaultlib.glbl
-
-xsim: xelab
-	$(XSIM) $(XSIM_OPTS) pcie_mmio_sim
-
-gtkwave: xsim
-	$(GTKWAVE) dump.vcd
-
-xgui: xsim
-	$(XSIM) -nolog -gui pcie_mmio_sim
+.PHONY: run
+run: obj_dir/V$(sim_top)
+	obj_dir/V$(sim_top)
 
 .PHONY: clean
 clean:
-	rm -rf webtalk* xelab* xsim* xvlog* xsc*
-	rm -f *.wdb *.vcd *.log
-	rm -f sim_vlog.prj
+	rm -f wave.vcd
+	rm -rf obj_dir
 

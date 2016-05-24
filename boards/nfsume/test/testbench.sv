@@ -1,80 +1,36 @@
-`default_nettype none
-`timescale 1ps/1ps
+`timescale 1ps / 1ps
+`define SIMULATION
 
-`define TOP_PATH    testbench.top0
+module testbench(
+	input wire user_clk,
+	input wire clk100,
+	input wire cold_reset,
+	input wire SFP_CLK_P
+);
 
-module testbench;
-	defparam `TOP_PATH.PL_FAST_TRAIN = "TRUE";
-
-	// 200 MHz clock for PCIe
-	`define XG_REF_CLK  5000        // 5000 * 1ps = 5ns, 200 MHz clock
-	logic clk_200;
-	initial begin
-		clk_200 = 0;
-		forever #(`XG_REF_CLK/2) clk_200 = ~clk_200;
-	end
-	logic clk200_p = clk_200;
-	logic clk200_n = ~clk_200;
-
-	// clock: sys_clk_p, sys_clk_n
-	`define XG_REF_CLK  10000        // 5000 * 1ps = 5ns, 200 MHz clock
-	logic clk_100;
-	initial begin
-		clk_100 = 0;
-		forever #(`XG_REF_CLK/2) clk_100 = ~clk_100;
-	end
-	logic sys_clk_p = clk_200;
-	logic sys_clk_n = ~clk_200;
-
-	// sys_rst_n
-	logic sys_rst_n;
-	initial begin
-		sys_rst_n = 0;
-		for (int i = 0; i < 100; i++) begin
-			@(posedge clk_200);
-		end
-		sys_rst_n = 1;
-	end
-
-	// top
-	logic [`TOP_PATH.LINK_WIDTH-1:0] pci_exp_txp, pci_exp_txn;
-	logic [`TOP_PATH.LINK_WIDTH-1:0] pci_exp_rxp, pci_exp_rxn;
-	logic button_n, button_s, button_w, button_e;
-	logic button_c = ~sys_rst_n;
-	logic [3:0] dipsw;
-	logic [7:0] led;
-	top top0(.*); 
-	
-	initial begin
-		#5000;
-
-		for (int i = 0; i < 2000; i++) begin
-			pcitx2pcirx(pci_exp_txp, pci_exp_txn, pci_exp_rxp, pci_exp_rxn);
-		end
-
-		#1000;
-		$finish;
-	end
-
-	task pcitx2pcirx;
-		input  [`TOP_PATH.LINK_WIDTH-1:0] pci_exp_txp;
-		input  [`TOP_PATH.LINK_WIDTH-1:0] pci_exp_txn;
-		output [`TOP_PATH.LINK_WIDTH-1:0] pci_exp_rxp;
-		output [`TOP_PATH.LINK_WIDTH-1:0] pci_exp_rxn;
-
-		@(posedge clk_200) begin
-			pci_exp_rxp = pci_exp_txp;
-			pci_exp_rxn = pci_exp_txn;
-		end
-	endtask
-
-	initial begin
-		button_n = 0;
-		button_s = 0;
-		button_w = 0;
-		button_e = 0;
-		dipsw = 0;
-	end
+wire SFP_REC_CLK_P;
+wire SFP_REC_CLK_N;
+wire ETH1_RX_P;
+wire ETH1_RX_N;
+wire ETH1_TX_DISABLE;
+eth_top eth1_top(
+	.user_clk        (user_clk),
+	.clk100          (clk100),
+	.cold_reset      (cold_reset),
+	.SFP_CLK_P       (SFP_CLK_P),
+	.SFP_CLK_N       (1'b0),
+	.SFP_REC_CLK_P   (SFP_REC_CLK_P),
+	.SFP_REC_CLK_N   (SFP_REC_CLK_N),
+	.ETH1_TX_P       (1'b0),
+	.ETH1_TX_N       (1'b0),
+	.ETH1_RX_P       (ETH1_RX_P),
+	.ETH1_RX_N       (ETH1_RX_N),
+	.I2C_FPGA_SCL    (1'b0),
+	.I2C_FPGA_SDA    (1'b0),
+	.SFP_CLK_ALARM_B (1'b0),
+	.ETH1_TX_FAULT   (1'b0),
+	.ETH1_RX_LOS     (1'b0),
+	.ETH1_TX_DISABLE (ETH1_TX_DISABLE)
+);
 endmodule
-`default_nettype wire
 
