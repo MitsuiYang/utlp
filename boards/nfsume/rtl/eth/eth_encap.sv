@@ -3,7 +3,6 @@ import ethernet_pkg::*;
 import ip_pkg::*;
 import udp_pkg::*;
 
-
 module eth_encap #(
 	parameter frame_len = 16'd60,
 	
@@ -19,14 +18,14 @@ module eth_encap #(
 	parameter udp_dport = 16'd3776
 )(
 	input wire clk156,
+	input wire sys_rst,
 
-	output logic        s_axis_tready,
-	input  logic        s_axis_tvalid,
-	input  logic [63:0] s_axis_tdata,
-	input  logic [ 7:0] s_axis_tkeep,
-	input  logic        s_axis_tlast,
-	input  logic        s_axis_tuser,
+	// TLP packet (FIFO read)
+	output logic        rd_en,
+	input  logic [73:0] dout,
+	input  logic        empty,
 
+	// Eth+IP+UDP + TLP packet
 	input  logic        m_axis_tready,
 	output logic        m_axis_tvalid,
 	output logic [63:0] m_axis_tdata,
@@ -88,84 +87,106 @@ always_comb begin
 	tx_pkt.hdr.udp.check = 0;
 end
 
-// 
-logic        tmp_tready0, tmp_tready1, tmp_tready2, tmp_tready3, tmp_tready4, tmp_tready5, tmp_tready6;
-logic        tmp_tvalid0, tmp_tvalid1, tmp_tvalid2, tmp_tvalid3, tmp_tvalid4, tmp_tvalid5, tmp_tvalid6;
-logic [63:0] tmp_tdata0, tmp_tdata1, tmp_tdata2, tmp_tdata3, tmp_tdata4, tmp_tdata5, tmp_tdata6;
-logic [ 7:0] tmp_tkeep0, tmp_tkeep1, tmp_tkeep2, tmp_tkeep3, tmp_tkeep4, tmp_tkeep5, tmp_tkeep6;
-logic        tmp_tlast0, tmp_tlast1, tmp_tlast2, tmp_tlast3, tmp_tlast4, tmp_tlast5, tmp_tlast6;
-logic        tmp_tuser0, tmp_tuser1, tmp_tuser2, tmp_tuser3, tmp_tuser4, tmp_tuser5, tmp_tuser6;
-// tready
+
+logic [15:0] tx_count, tx_count_next;
+enum logic [1:0] { TX_IDLE, TX_HDR, TX_DATA } tx_state = TX_IDLE, tx_state_next;
 always_ff @(posedge clk156) begin
-	tmp_tready0   <= m_axis_tready;
-	tmp_tready1   <= tmp_tready0;
-	tmp_tready2   <= tmp_tready1;
-	tmp_tready3   <= tmp_tready2;
-	tmp_tready4   <= tmp_tready3;
-	tmp_tready5   <= tmp_tready4;
-	tmp_tready6   <= tmp_tready5;
-	s_axis_tready <= tmp_tready6;
+	if (sys_rst) begin
+		tx_state <= TX_IDLE;
+		tx_count <= 0;
+	end else begin
+		tx_state <= tx_state_next;
+		tx_count <= tx_count_next;
+	end
+end
+
+always_comb begin
+	tx_state_next = tx_state;
+	tx_count_next = tx_count;
+
+	rd_en = 0;
+
+	case(tx_state)
+		TX_IDLE: begin
+			if (m_axis_tready && !empty) begin
+				tx_state_next = TX_HDR;
+			end
+		end
+		TX_HDR: begin
+			if (m_axis_tready) begin
+				tx_count_next = tx_count + 1;
+				if (tx_count == 5) begin
+					tx_state_next = TX_DATA;
+					rd_en = 1;
+				end
+			end
+		end
+		TX_DATA: begin
+			if (m_axis_tready) begin
+				rd_en = 1;
+				if (m_axis_tlast) begin
+					tx_state_next = TX_IDLE;
+					rd_en = 0;
+				end
+			end
+		end
+		default:
+			rd_en = 0;
+	endcase
 end
 
 // tvalid
-always_ff @(posedge clk156) begin
-	tmp_tvalid0   <= s_axis_tvalid;
-	tmp_tvalid1   <= tmp_tvalid0;
-	tmp_tvalid2   <= tmp_tvalid1;
-	tmp_tvalid3   <= tmp_tvalid2;
-	tmp_tvalid4   <= tmp_tvalid3;
-	tmp_tvalid5   <= tmp_tvalid4;
-	tmp_tvalid6   <= tmp_tvalid5;
-	m_axis_tvalid <= tmp_tvalid6;
+always_comb m_axis_tvalid = (tx_state == TX_HDR || tx_state == TX_DATA);
+
+// tkeep
+always_comb begin
+	if (tx_state == TX_HDR) begin
+		case (tx_count)
+			16'h0: m_axis_tkeep = 8'b1111_1111;
+			16'h1: m_axis_tkeep = 8'b1111_1111;
+			16'h2: m_axis_tkeep = 8'b1111_1111;
+			16'h3: m_axis_tkeep = 8'b1111_1111;
+			16'h4: m_axis_tkeep = 8'b1111_1111;
+			16'h5: m_axis_tkeep = 8'b1111_1111;
+			default:
+				m_axis_tkeep = 8'b0;
+		endcase
+	end else if (tx_state == TX_DATA) begin
+		m_axis_tkeep = dout[73:66];
+	end
 end
 
 // tdata
-always_ff @(posedge clk156) begin
-	tmp_tdata0   <= s_axis_tdata;
-	tmp_tdata1   <= tmp_tdata0;
-	tmp_tdata2   <= tmp_tdata1;
-	tmp_tdata3   <= tmp_tdata2;
-	tmp_tdata4   <= tmp_tdata3;
-	tmp_tdata5   <= tmp_tdata4;
-	tmp_tdata6   <= tmp_tdata5;
-	m_axis_tdata <= tmp_tdata6;
+logic [63:0] m_axis_tdata_reg;
+always_comb begin
+	if (tx_state == TX_HDR) begin
+		case (tx_count)
+			16'h0: m_axis_tdata_reg = tx_pkt.raw[5];
+			16'h1: m_axis_tdata_reg = tx_pkt.raw[4];
+			16'h2: m_axis_tdata_reg = tx_pkt.raw[3];
+			16'h3: m_axis_tdata_reg = tx_pkt.raw[2];
+			16'h4: m_axis_tdata_reg = tx_pkt.raw[1];
+			16'h5: m_axis_tdata_reg = tx_pkt.raw[0];
+			default:
+				m_axis_tdata_reg = 64'b0;
+		endcase
+	end else if (tx_state == TX_DATA) begin
+		m_axis_tdata_reg = dout[65:2];
+	end
 end
-
-// tkeep
-always_ff @(posedge clk156) begin
-	tmp_tkeep0   <= s_axis_tkeep;
-	tmp_tkeep1   <= tmp_tkeep0;
-	tmp_tkeep2   <= tmp_tkeep1;
-	tmp_tkeep3   <= tmp_tkeep2;
-	tmp_tkeep4   <= tmp_tkeep3;
-	tmp_tkeep5   <= tmp_tkeep4;
-	tmp_tkeep6   <= tmp_tkeep5;
-	m_axis_tkeep <= tmp_tkeep6;
+always_comb begin
+	if (tx_state == TX_HDR) begin
+		m_axis_tdata = endian_conv64(m_axis_tdata_reg);
+	end else if (tx_state == TX_DATA) begin
+		m_axis_tdata = m_axis_tdata_reg;
+	end
 end
 
 // tlast
-always_ff @(posedge clk156) begin
-	tmp_tlast0   <= s_axis_tlast;
-	tmp_tlast1   <= tmp_tlast0;
-	tmp_tlast2   <= tmp_tlast1;
-	tmp_tlast3   <= tmp_tlast2;
-	tmp_tlast4   <= tmp_tlast3;
-	tmp_tlast5   <= tmp_tlast4;
-	tmp_tlast6   <= tmp_tlast5;
-	m_axis_tlast <= tmp_tlast6;
-end
+always_comb m_axis_tlast = (tx_state == TX_DATA) ? dout[1] : 1'b0;
 
 // tuser
-always_ff @(posedge clk156) begin
-	tmp_tuser0   <= s_axis_tuser;
-	tmp_tuser1   <= tmp_tuser0;
-	tmp_tuser2   <= tmp_tuser1;
-	tmp_tuser3   <= tmp_tuser2;
-	tmp_tuser4   <= tmp_tuser3;
-	tmp_tuser5   <= tmp_tuser4;
-	tmp_tuser6   <= tmp_tuser5;
-	m_axis_tuser <= tmp_tuser6;
-end
+always_comb m_axis_tuser = (tx_state == TX_DATA) ? dout[0] : 1'b0;
 
 endmodule
 

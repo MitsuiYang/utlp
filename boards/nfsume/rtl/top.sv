@@ -65,7 +65,7 @@ always_ff @(posedge clk200) begin
 		cold_reset <= 1'b0;
 end
 
-
+// PCIe
 /*
 wire [C_DATA_WIDTH-1:0] m_axis_cq_tdata;
 wire             [84:0] m_axis_cq_tuser;
@@ -74,9 +74,21 @@ wire   [KEEP_WIDTH-1:0] m_axis_cq_tkeep;
 wire                    m_axis_cq_tvalid;
 wire             [21:0] m_axis_cq_tready;
 */
-pcie_top pcie_top0 (.*);
+wire user_clk;
+pcie_top pcie_top0(.*);
 
-eth_top eth1_top (.*);
+// Ethernet
+/*
+wire tmp_tready;
+wire tmp_tvalid = tmp_tready & m_axis_cq_tready;
+wire [C_DATA_WIDTH-1:0] m_axis_tx_tdata;
+wire             [84:0] m_axis_tx_tuser;
+wire                    m_axis_tx_tlast;
+wire   [KEEP_WIDTH-1:0] m_axis_tx_tkeep;
+wire                    m_axis_tx_tvalid;
+wire                    m_axis_tx_tready;
+*/
+eth_top eth1_top(.*);
 
 endmodule
 
