@@ -53,13 +53,19 @@ XDC_SRC := constraints/sume.xdc      \
            constraints/sume-pcie.xdc \
            constraints/sume-eth.xdc 
 
-TCL_SRC := scripts/vivado_synth.tcl      \
+TCL_SRC := scripts/vivado_createprj.tcl  \
+           scripts/vivado_synth.tcl      \
            scripts/vivado_place.tcl      \
            scripts/vivado_route.tcl      \
            scripts/vivado_bitstream.tcl
 
 
 all: bitstream
+
+createprj: pemu.xpr
+pemu.xpr: $(TCL_SRC) $(INC_SRC) $(RTL_SRC) $(IP_SRC) $(XDC_SRC)
+	test -e $(outdir) || mkdir $(outdir)
+	vivado -mode batch -source scripts/vivado_createprj.tcl -log $(outdir)/createprj_log.txt -nojournal -tclargs "$(INC_SRC) $(RTL_SRC)" "$(IP_SRC)" "$(XDC_SRC)"
 
 synth: $(outdir)/post_syn.dcp
 $(outdir)/post_syn.dcp: $(TCL_SRC) $(INC_SRC) $(RTL_SRC) $(IP_SRC) $(XDC_SRC)
