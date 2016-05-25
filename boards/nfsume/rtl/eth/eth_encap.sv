@@ -104,8 +104,8 @@ always_comb begin
 	tx_state_next = tx_state;
 	tx_count_next = tx_count;
 
-	rd_en = 0;
 	tx_count_next = 0;
+	rd_en = 0;
 
 	case(tx_state)
 		TX_IDLE: begin
@@ -118,7 +118,6 @@ always_comb begin
 				tx_count_next = tx_count + 1;
 				if (tx_count == 5) begin
 					tx_state_next = TX_DATA;
-					rd_en = 1;
 				end
 			end
 		end
@@ -127,7 +126,6 @@ always_comb begin
 				rd_en = 1;
 				if (m_axis_tlast) begin
 					tx_state_next = TX_IDLE;
-					rd_en = 0;
 				end
 			end
 		end
