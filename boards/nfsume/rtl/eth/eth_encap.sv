@@ -104,13 +104,13 @@ always_comb begin
 	tx_state_next = tx_state;
 	tx_count_next = tx_count;
 
-	tx_count_next = 0;
 	rd_en = 0;
 
 	case(tx_state)
 		TX_IDLE: begin
 			if (m_axis_tready && !empty) begin
 				tx_state_next = TX_HDR;
+				tx_count_next = 0;
 			end
 		end
 		TX_HDR: begin
