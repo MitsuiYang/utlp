@@ -13,7 +13,9 @@ wire SFP_REC_CLK_N;
 wire ETH1_RX_P;
 wire ETH1_RX_N;
 wire ETH1_TX_DISABLE;
-eth_top eth1_top(
+eth_top #(
+	.ifg_len(28'hF)
+) eth1_top (
 	.user_clk        (user_clk),
 	.clk100          (clk100),
 	.cold_reset      (cold_reset),

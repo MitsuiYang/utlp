@@ -4,6 +4,7 @@ import ip_pkg::*;
 import udp_pkg::*;
 
 module eth_send #(
+	parameter ifg_len = 28'hFFFF,
 	parameter frame_len = 16'd60,
 	
 	parameter frame_len_width = (frame_len + ETH_FCS_LEN) / 8,
@@ -110,7 +111,7 @@ always_ff @(posedge clk156) begin
 			end
 			TX_IFG: begin
 				ifgcnt <= ifgcnt + 1;
-				if (ifgcnt == 28'hFFFF)
+				if (ifgcnt == ifg_len)
 					tx_state <= TX_IDLE;
 			end
 			default:

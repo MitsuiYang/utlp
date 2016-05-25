@@ -1,6 +1,8 @@
 `timescale 1ns / 1ps
 
-module eth_top (
+module eth_top #(
+	parameter ifg_len = 28'hFFFF
+)(
 	input logic user_clk,
 	input logic clk100,
 	input logic cold_reset,
@@ -52,7 +54,9 @@ logic [63:0] s_axis_tx_tdata;
 logic [ 7:0] s_axis_tx_tkeep;
 logic        s_axis_tx_tlast;
 logic        s_axis_tx_tuser;
-eth_send eth_send0 (
+eth_send #(
+	.ifg_len(ifg_len)
+) eth_send0 (
 	.clk156(user_clk),
 	.reset(sys_rst),
 	.*
