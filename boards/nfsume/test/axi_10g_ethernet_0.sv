@@ -54,11 +54,18 @@ module axi_10g_ethernet_0 (
 
 always_comb coreclk_out = refclk_p;
 
+logic [1:0] shift_tready;
 always_ff @(posedge refclk_p) begin
 	if (reset) begin
 		s_axis_tx_tready <= 1'b0;
+		shift_tready <= 2'0;
 	end else begin
 		s_axis_tx_tready <= 1'b1;
+
+		if (s_axis_tx_tlast == 1 || shift_tready != 0) begin
+			s_axis_tx_tready <= 1'b0;
+			shift_tready <= shift_tready + 1;
+		end
 	end
 end
 
