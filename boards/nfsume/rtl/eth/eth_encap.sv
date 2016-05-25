@@ -105,6 +105,7 @@ always_comb begin
 	tx_count_next = tx_count;
 
 	rd_en = 0;
+	tx_count_next = 0;
 
 	case(tx_state)
 		TX_IDLE: begin
