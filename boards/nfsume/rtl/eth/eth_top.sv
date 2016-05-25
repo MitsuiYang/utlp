@@ -26,10 +26,13 @@ module eth_top #(
 	input  logic ETH1_RX_LOS,
 	output logic ETH1_TX_DISABLE
 );
-
-logic sys_rst = cold_reset;
-
 logic clk156;
+
+logic sys_rst;
+always_ff @(posedge clk156) begin
+	if (cold_reset == 1)
+		sys_rst <= 1;
+end
 
 // sfp_refclk_init
 sfp_refclk_init sfp_refclk_init0 (
