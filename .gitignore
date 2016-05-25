@@ -94,3 +94,4 @@
 !Makefile
 !*.xcix
 !README.*
+!*.cpp
