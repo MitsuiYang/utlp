@@ -27,7 +27,10 @@ module eth_top #(
 	output logic ETH1_TX_DISABLE
 );
 
-logic sys_rst = cold_reset;
+logic sys_rst;
+always @(posedge clk156) begin
+	sys_rst <= cold_reset;
+end
 
 logic clk156;
 
