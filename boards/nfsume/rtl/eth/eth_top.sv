@@ -61,7 +61,7 @@ eth_send #(
 	.ifg_len(ifg_len)
 ) eth_send0 (
 	.clk156(user_clk),
-	.reset(sys_rst),
+	.reset(cold_reset),
 	.*
 );
 
