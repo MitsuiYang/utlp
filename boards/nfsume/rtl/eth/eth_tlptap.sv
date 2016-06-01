@@ -1,7 +1,7 @@
 module eth_tlptap #(
 	parameter PL_LINK_CAP_MAX_LINK_WIDTH = 2,
 	parameter C_DATA_WIDTH               = 64,
-	parameter KEEP_WIDTH                 = C_DATA_WIDTH / 32,
+	parameter KEEP_WIDTH                 = C_DATA_WIDTH / 32
 )(
 	// Eth+IP+UDP + TLP packet
 	input logic [C_DATA_WIDTH-1:0] s_axis_tdata,
@@ -17,7 +17,7 @@ module eth_tlptap #(
 	input  logic        full
 );
 
-logic [7:0] tmp_tkeep = { 4{s_axis_tkeep[1]}, 4{s_axis_tkeep[0]} };
+logic [7:0] tmp_tkeep = { {4{s_axis_tkeep[1]}}, {4{s_axis_tkeep[0]}} };
 logic tmp_tready = s_axis_tready[0];
 logic tmp_tuser = s_axis_tuser[0];
 
