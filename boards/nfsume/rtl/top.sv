@@ -77,17 +77,6 @@ wire             [21:0] m_axis_cq_tready_reg;
 wire user_clk;
 pcie_top pcie_top0(.*);
 
-ila_0 ila_0_ins(
-	.clk(user_clk),
-	.probe0({ m_axis_cq_tdata_reg,
-	          m_axis_cq_tuser_reg,
-	          m_axis_cq_tlast_reg,
-	          m_axis_cq_tkeep_reg,
-	          m_axis_cq_tvalid_reg,
-	          m_axis_cq_tready_reg })
-);
-
-
 // Ethernet
 /*
 wire tmp_tready;

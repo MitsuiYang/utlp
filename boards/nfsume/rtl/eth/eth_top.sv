@@ -1,6 +1,10 @@
 `timescale 1ns / 1ps
 
 module eth_top #(
+	parameter PL_LINK_CAP_MAX_LINK_WIDTH = 2,
+	parameter C_DATA_WIDTH               = 64,
+	parameter KEEP_WIDTH                 = C_DATA_WIDTH / 32,
+
 	parameter ifg_len = 28'hFFFF
 )(
 	input logic user_clk,
@@ -24,13 +28,32 @@ module eth_top #(
 
 	input  logic ETH1_TX_FAULT,
 	input  logic ETH1_RX_LOS,
-	output logic ETH1_TX_DISABLE
+	output logic ETH1_TX_DISABLE,
+
+	// RX_ENGINE
+	input logic [C_DATA_WIDTH-1:0] m_axis_cq_tdata_reg,
+	input logic             [84:0] m_axis_cq_tuser_reg,
+	input logic                    m_axis_cq_tlast_reg,
+	input logic   [KEEP_WIDTH-1:0] m_axis_cq_tkeep_reg,
+	input logic                    m_axis_cq_tvalid_reg,
+	input logic             [21:0] m_axis_cq_tready_reg
+
 );
 
 logic sys_rst;
 always @(posedge clk156) begin
 	sys_rst <= cold_reset;
 end
+
+ila_0 ila_0_ins(
+	.clk(user_clk),
+	.probe0({ m_axis_cq_tdata_reg,
+	          m_axis_cq_tuser_reg,
+	          m_axis_cq_tlast_reg,
+	          m_axis_cq_tkeep_reg,
+	          m_axis_cq_tvalid_reg,
+	          m_axis_cq_tready_reg })
+);
 
 logic clk156;
 
