@@ -43,9 +43,8 @@ module pcie_top # (
 	input wire cold_reset,
 	output wire [7:0] led,
 
-	output wire user_clk
+	output wire user_clk,
 
-/*
 	// RX_ENGINE
 	output wire [C_DATA_WIDTH-1:0] m_axis_cq_tdata,
 	output wire             [84:0] m_axis_cq_tuser,
@@ -53,7 +52,6 @@ module pcie_top # (
 	output wire   [KEEP_WIDTH-1:0] m_axis_cq_tkeep,
 	output wire                    m_axis_cq_tvalid,
 	output wire             [21:0] m_axis_cq_tready
-*/
 );
 
   // Local Parameters derived from user selection
@@ -84,12 +82,12 @@ module pcie_top # (
   wire                                       m_axis_rc_tvalid;
   wire                             [21:0]    m_axis_rc_tready;
 
-  wire                 [C_DATA_WIDTH-1:0]    m_axis_cq_tdata;
-  wire                             [84:0]    m_axis_cq_tuser;
-  wire                                       m_axis_cq_tlast;
-  wire                   [KEEP_WIDTH-1:0]    m_axis_cq_tkeep;
-  wire                                       m_axis_cq_tvalid;
-  wire                             [21:0]    m_axis_cq_tready;
+//  wire                 [C_DATA_WIDTH-1:0]    m_axis_cq_tdata;
+//  wire                             [84:0]    m_axis_cq_tuser;
+//  wire                                       m_axis_cq_tlast;
+//  wire                   [KEEP_WIDTH-1:0]    m_axis_cq_tkeep;
+//  wire                                       m_axis_cq_tvalid;
+//  wire                             [21:0]    m_axis_cq_tready;
 
   wire                 [C_DATA_WIDTH-1:0]    s_axis_cc_tdata;
   wire                             [32:0]    s_axis_cc_tuser;

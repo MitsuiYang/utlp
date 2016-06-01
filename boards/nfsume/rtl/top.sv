@@ -2,7 +2,9 @@
 `timescale 1ps / 1ps
 
 module top #(
-	parameter PL_LINK_CAP_MAX_LINK_WIDTH = 2
+	parameter PL_LINK_CAP_MAX_LINK_WIDTH = 2,
+	parameter C_DATA_WIDTH               = 64,
+	parameter KEEP_WIDTH                 = C_DATA_WIDTH / 32
 )(
 	input wire FPGA_SYSCLK_P,
 	input wire FPGA_SYSCLK_N,
@@ -66,16 +68,20 @@ always_ff @(posedge clk200) begin
 end
 
 // PCIe
-/*
 wire [C_DATA_WIDTH-1:0] m_axis_cq_tdata;
 wire             [84:0] m_axis_cq_tuser;
 wire                    m_axis_cq_tlast;
 wire   [KEEP_WIDTH-1:0] m_axis_cq_tkeep;
 wire                    m_axis_cq_tvalid;
 wire             [21:0] m_axis_cq_tready;
-*/
 wire user_clk;
 pcie_top pcie_top0(.*);
+
+//ila_0 ila_0_ins(
+//	.clk(user_clk),
+//	.probe0({ m_axis_cq_tdata, m_axis_cq_tuser, m_axis_cq_tlast, m_axis_cq_tkeep, m_axis_cq_tvalid, m_axis_cq_tready })
+//);
+
 
 // Ethernet
 /*
