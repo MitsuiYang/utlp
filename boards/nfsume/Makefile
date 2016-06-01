@@ -45,7 +45,6 @@ INC_SRC := $(wildcard ../../cores/pkg/*.sv)
 #IP_SRC := ip_catalog/pcie3_7x_0/pcie3_7x_0.xci
 IP_SRC := ip_catalog/pcie3_7x_0/pcie3_7x_0.xci \
           ip_catalog/axi_10g_ethernet_0/axi_10g_ethernet_0.xci    \
-          ip_catalog/axi_10g_ethernet_1/axi_10g_ethernet_1.xci    \
           ip_catalog/pcie2eth_fifo/pcie2eth_fifo.xci         \
           ip_catalog/si5324_regs_rom/si5324_regs_rom.xcix
 
