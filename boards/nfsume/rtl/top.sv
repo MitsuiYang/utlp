@@ -68,19 +68,24 @@ always_ff @(posedge clk200) begin
 end
 
 // PCIe
-wire [C_DATA_WIDTH-1:0] m_axis_cq_tdata;
-wire             [84:0] m_axis_cq_tuser;
-wire                    m_axis_cq_tlast;
-wire   [KEEP_WIDTH-1:0] m_axis_cq_tkeep;
-wire                    m_axis_cq_tvalid;
-wire             [21:0] m_axis_cq_tready;
+wire [C_DATA_WIDTH-1:0] m_axis_cq_tdata_reg;
+wire             [84:0] m_axis_cq_tuser_reg;
+wire                    m_axis_cq_tlast_reg;
+wire   [KEEP_WIDTH-1:0] m_axis_cq_tkeep_reg;
+wire                    m_axis_cq_tvalid_reg;
+wire             [21:0] m_axis_cq_tready_reg;
 wire user_clk;
 pcie_top pcie_top0(.*);
 
-//ila_0 ila_0_ins(
-//	.clk(user_clk),
-//	.probe0({ m_axis_cq_tdata, m_axis_cq_tuser, m_axis_cq_tlast, m_axis_cq_tkeep, m_axis_cq_tvalid, m_axis_cq_tready })
-//);
+ila_0 ila_0_ins(
+	.clk(user_clk),
+	.probe0({ m_axis_cq_tdata_reg,
+	          m_axis_cq_tuser_reg,
+	          m_axis_cq_tlast_reg,
+	          m_axis_cq_tkeep_reg,
+	          m_axis_cq_tvalid_reg,
+	          m_axis_cq_tready_reg })
+);
 
 
 // Ethernet

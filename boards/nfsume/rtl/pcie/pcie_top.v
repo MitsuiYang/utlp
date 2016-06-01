@@ -46,12 +46,12 @@ module pcie_top # (
 	output wire user_clk,
 
 	// RX_ENGINE
-	output wire [C_DATA_WIDTH-1:0] m_axis_cq_tdata,
-	output wire             [84:0] m_axis_cq_tuser,
-	output wire                    m_axis_cq_tlast,
-	output wire   [KEEP_WIDTH-1:0] m_axis_cq_tkeep,
-	output wire                    m_axis_cq_tvalid,
-	output wire             [21:0] m_axis_cq_tready
+	output reg [C_DATA_WIDTH-1:0] m_axis_cq_tdata_reg,
+	output reg             [84:0] m_axis_cq_tuser_reg,
+	output reg                    m_axis_cq_tlast_reg,
+	output reg   [KEEP_WIDTH-1:0] m_axis_cq_tkeep_reg,
+	output reg                    m_axis_cq_tvalid_reg,
+	output reg             [21:0] m_axis_cq_tready_reg
 );
 
   // Local Parameters derived from user selection
@@ -82,12 +82,12 @@ module pcie_top # (
   wire                                       m_axis_rc_tvalid;
   wire                             [21:0]    m_axis_rc_tready;
 
-//  wire                 [C_DATA_WIDTH-1:0]    m_axis_cq_tdata;
-//  wire                             [84:0]    m_axis_cq_tuser;
-//  wire                                       m_axis_cq_tlast;
-//  wire                   [KEEP_WIDTH-1:0]    m_axis_cq_tkeep;
-//  wire                                       m_axis_cq_tvalid;
-//  wire                             [21:0]    m_axis_cq_tready;
+  wire                 [C_DATA_WIDTH-1:0]    m_axis_cq_tdata;
+  wire                             [84:0]    m_axis_cq_tuser;
+  wire                                       m_axis_cq_tlast;
+  wire                   [KEEP_WIDTH-1:0]    m_axis_cq_tkeep;
+  wire                                       m_axis_cq_tvalid;
+  wire                             [21:0]    m_axis_cq_tready;
 
   wire                 [C_DATA_WIDTH-1:0]    s_axis_cc_tdata;
   wire                             [32:0]    s_axis_cc_tuser;
@@ -96,6 +96,24 @@ module pcie_top # (
   wire                                       s_axis_cc_tvalid;
   wire                              [3:0]    s_axis_cc_tready;
 
+// sora
+always @(posedge user_clk) begin
+	if(cold_reset) begin
+		m_axis_cq_tdata_reg  <= 0;
+		m_axis_cq_tuser_reg  <= 0;
+		m_axis_cq_tlast_reg  <= 0;
+		m_axis_cq_tkeep_reg  <= 0;
+		m_axis_cq_tvalid_reg <= 0;
+		m_axis_cq_tready_reg <= 0;
+	end else begin
+		m_axis_cq_tdata_reg  <= m_axis_cq_tdata;
+		m_axis_cq_tuser_reg  <= m_axis_cq_tuser;
+		m_axis_cq_tlast_reg  <= m_axis_cq_tlast;
+		m_axis_cq_tkeep_reg  <= m_axis_cq_tkeep;
+		m_axis_cq_tvalid_reg <= m_axis_cq_tvalid;
+		m_axis_cq_tready_reg <= m_axis_cq_tready;
+	end
+end
 
   //----------------------------------------------------------------------------------------------------------------//
   //  Configuration (CFG) Interface                                                                                 //
