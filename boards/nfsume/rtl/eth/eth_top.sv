@@ -37,7 +37,6 @@ module eth_top #(
 	input logic   [KEEP_WIDTH-1:0] m_axis_cq_tkeep_reg,
 	input logic                    m_axis_cq_tvalid_reg,
 	input logic             [21:0] m_axis_cq_tready_reg
-
 );
 
 logic sys_rst;
@@ -45,15 +44,15 @@ always @(posedge clk156) begin
 	sys_rst <= cold_reset;
 end
 
-ila_0 ila_0_ins(
-	.clk(user_clk),
-	.probe0({ m_axis_cq_tdata_reg,
-	          m_axis_cq_tuser_reg,
-	          m_axis_cq_tlast_reg,
-	          m_axis_cq_tkeep_reg,
-	          m_axis_cq_tvalid_reg,
-	          m_axis_cq_tready_reg })
-);
+//ila_0 ila_0_ins(
+//	.clk(user_clk),
+//	.probe0({ m_axis_cq_tdata_reg,
+//	          m_axis_cq_tuser_reg,
+//	          m_axis_cq_tlast_reg,
+//	          m_axis_cq_tkeep_reg,
+//	          m_axis_cq_tvalid_reg,
+//	          m_axis_cq_tready_reg })
+//);
 
 logic clk156;
 
@@ -74,19 +73,19 @@ logic [79:0] mac_rx_configuration_vector;
 eth_mac_conf eth_mac_conf0(.*);
 
 // eth_send
-logic        s_axis_tx_tvalid;
-logic        s_axis_tx_tready;
-logic [63:0] s_axis_tx_tdata;
-logic [ 7:0] s_axis_tx_tkeep;
-logic        s_axis_tx_tlast;
-logic        s_axis_tx_tuser;
-eth_send #(
-	.ifg_len(ifg_len)
-) eth_send0 (
-	.clk156(user_clk),
-	.reset(cold_reset),
-	.*
-);
+//logic        s_axis_tx_tvalid;
+//logic        s_axis_tx_tready;
+//logic [63:0] s_axis_tx_tdata;
+//logic [ 7:0] s_axis_tx_tkeep;
+//logic        s_axis_tx_tlast;
+//logic        s_axis_tx_tuser;
+//eth_send #(
+//	.ifg_len(ifg_len)
+//) eth_send0 (
+//	.clk156(user_clk),
+//	.reset(cold_reset),
+//	.*
+//);
 
 // pcie2eth_fifo
 logic wr_en, rd_en;
@@ -100,20 +99,14 @@ pcie2eth_fifo pcie2eth_fifo0 (
 );
 
 // eth_tlptap (PCIe to FIFO)
-//logic        s_axis_tlptap_tvalid;
-//logic        s_axis_tlptap_tready;
-//logic [63:0] s_axis_tlptap_tdata;
-//logic [ 7:0] s_axis_tlptap_tkeep;
-//logic        s_axis_tlptap_tlast;
-//logic        s_axis_tlptap_tuser;
 eth_tlptap eth_tlptap0 (
 	// data in(tap)
-	.s_axis_tvalid(s_axis_tx_tvalid),
-	.s_axis_tready(s_axis_tx_tready),
-	.s_axis_tdata (s_axis_tx_tdata),
-	.s_axis_tkeep (s_axis_tx_tkeep),
-	.s_axis_tlast (s_axis_tx_tlast),
-	.s_axis_tuser (s_axis_tx_tuser),
+	.s_axis_tvalid(m_axis_cq_tvalid_reg),
+	.s_axis_tready(m_axis_cq_tready_reg),
+	.s_axis_tdata (m_axis_cq_tdata_reg),
+	.s_axis_tkeep (m_axis_cq_tkeep_reg),
+	.s_axis_tlast (m_axis_cq_tlast_reg),
+	.s_axis_tuser (m_axis_cq_tuser_reg),
 
 	// FIFO write
 	.wr_en(wr_en),

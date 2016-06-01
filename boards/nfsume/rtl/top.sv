@@ -78,16 +78,6 @@ wire user_clk;
 pcie_top pcie_top0(.*);
 
 // Ethernet
-/*
-wire tmp_tready;
-wire tmp_tvalid = tmp_tready & m_axis_cq_tready;
-wire [C_DATA_WIDTH-1:0] m_axis_tx_tdata;
-wire             [84:0] m_axis_tx_tuser;
-wire                    m_axis_tx_tlast;
-wire   [KEEP_WIDTH-1:0] m_axis_tx_tkeep;
-wire                    m_axis_tx_tvalid;
-wire                    m_axis_tx_tready;
-*/
 eth_top eth1_top(.*);
 
 endmodule
