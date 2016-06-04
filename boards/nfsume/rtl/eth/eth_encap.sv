@@ -2,6 +2,7 @@ import endian_pkg::*;
 import ethernet_pkg::*;
 import ip_pkg::*;
 import udp_pkg::*;
+import pcie_tcap_pkg::*;
 
 module eth_encap #(
 	parameter frame_len = 16'd60,
@@ -9,13 +10,13 @@ module eth_encap #(
 	parameter pemu_hdr_len = 48,
 
 //    parameter eth_dst   = 48'hFF_FF_FF_FF_FF_FF,
-	parameter eth_dst   = 48'h90_E2_BA_5D_8D_C8,
+	parameter eth_dst   = 48'h90_E2_BA_5D_8D_C9,
 	parameter eth_src   = 48'h00_11_22_33_44_55,
 	parameter eth_proto = ETH_P_IP,
-	parameter ip_saddr  = {8'd192, 8'd168, 8'd1, 8'd111},
-	parameter ip_daddr  = {8'd192, 8'd168, 8'd1, 8'd122},
-	parameter udp_sport = 16'd3776,
-	parameter udp_dport = 16'd3776
+	parameter ip_saddr  = {8'd192, 8'd168, 8'd11, 8'd1},
+	parameter ip_daddr  = {8'd192, 8'd168, 8'd11, 8'd3},
+	parameter udp_sport = 16'h3776,
+	parameter udp_dport = 16'h3776
 )(
 	input wire clk156,
 	input wire sys_rst,
@@ -57,7 +58,7 @@ typedef union packed {
 		ethhdr eth;                // 14B
 		iphdr ip;                  // 20B
 		udphdr udp;                //  8B
-		bit [47:0] pad;            //  6B
+		pcie_tcaphdr tcap;         //  6B
 	} hdr;
 } packet_t;
 
@@ -85,6 +86,11 @@ always_comb begin
 	tx_pkt.hdr.udp.dest = udp_dport;
 	tx_pkt.hdr.udp.len = frame_len - ETH_HDR_LEN - IP_HDR_DEFLEN;
 	tx_pkt.hdr.udp.check = 0;
+
+	tx_pkt.hdr.tcap.ver = 2'b01;
+	tx_pkt.hdr.tcap.dir = 0;
+	tx_pkt.hdr.tcap.rsrv = 0;
+	tx_pkt.hdr.tcap.ts = 40'haaaaaaaaaa;    // temporary
 end
 
 

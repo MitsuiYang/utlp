@@ -24,7 +24,6 @@ RTL_SRC := rtl/pcie/support/pcie3_7x_0_pipe_clock.v                          \
            rtl/SFP_CLK_INIT_rtl/sfp_refclk_init.vhd                          \
            rtl/eth/pcs_pma_conf.v                                            \
            rtl/eth/eth_mac_conf.v                                            \
-           rtl/eth/eth_send.sv                                               \
            rtl/eth/eth_tlptap.sv                                             \
            rtl/eth/eth_encap.sv                                              \
            rtl/eth/eth_top.sv                                                \
