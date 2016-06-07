@@ -99,7 +99,7 @@ program: $(outdir)/$(proj).bit
 synth-clean:
 	rm -f fsm_encoding.os usage_stat*
 	rm -rf build .Xil
-	rm -rf *.jou *.log
+	rm -rf *.jou *.log *.mif *.hw  *.ip_user_files *.cache  *.sim
 
 sim-clean:
 	rm -f wave.vcd
