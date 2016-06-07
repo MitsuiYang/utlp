@@ -60,7 +60,7 @@ TCL_SRC := scripts/vivado_createprj.tcl  \
 
 all: bitstream
 
-createprj: pemu.xpr
+prj: pemu.xpr
 pemu.xpr: $(TCL_SRC) $(INC_SRC) $(RTL_SRC) $(IP_SRC) $(XDC_SRC)
 	test -e $(outdir) || mkdir $(outdir)
 	vivado -mode batch -source scripts/vivado_createprj.tcl -log $(outdir)/createprj_log.txt -nojournal -tclargs "$(INC_SRC) $(RTL_SRC)" "$(IP_SRC)" "$(XDC_SRC)"
