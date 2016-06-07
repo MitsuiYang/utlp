@@ -108,4 +108,6 @@ sim-clean:
 .PHONY: clean
 clean: sim-clean synth-clean
 
-
+.PHONY: distclean
+distclean:
+	git clean -Xdf
