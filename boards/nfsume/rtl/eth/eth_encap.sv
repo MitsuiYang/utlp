@@ -6,8 +6,7 @@ import pcie_tcap_pkg::*;
 
 module eth_encap #(
 	parameter frame_len = 16'd60,
-	
-	parameter pemu_hdr_len = 48,
+	parameter tcap_hdr_len = 48,
 
 //    parameter eth_dst   = 48'hFF_FF_FF_FF_FF_FF,
 	parameter eth_dst   = 48'h90_E2_BA_5D_8D_C9,
@@ -136,7 +135,7 @@ always_comb begin
 			end
 		end
 		default:
-			rd_en = 0;
+			tx_state_next = TX_IDLE;
 	endcase
 end
 
