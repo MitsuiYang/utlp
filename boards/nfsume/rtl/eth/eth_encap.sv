@@ -5,8 +5,9 @@ import udp_pkg::*;
 import pcie_tcap_pkg::*;
 
 module eth_encap #(
-	parameter frame_len = 16'd60,
+	parameter frame_len = 16'd80,
 	parameter tcap_hdr_len = 48,
+	parameter tlp_len = 32,
 
 //    parameter eth_dst   = 48'hFF_FF_FF_FF_FF_FF,
 	parameter eth_dst   = 48'h90_E2_BA_5D_8D_C9,
@@ -16,8 +17,7 @@ module eth_encap #(
 	parameter ip_daddr  = {8'd192, 8'd168, 8'd11, 8'd3},
 	parameter udp_sport = 16'h3776,
 	parameter udp_dport = 16'h3776
-)(
-	input wire clk156,
+)( input wire clk156,
 	input wire sys_rst,
 
 	// TLP packet (FIFO read)
