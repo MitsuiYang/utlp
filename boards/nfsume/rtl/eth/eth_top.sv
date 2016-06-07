@@ -39,11 +39,6 @@ module eth_top #(
 	input logic             [21:0] m_axis_cq_tready_reg
 );
 
-logic sys_rst;
-always @(posedge clk156) begin
-	sys_rst <= cold_reset;
-end
-
 //ila_0 ila_0_ins(
 //	.clk(user_clk),
 //	.probe0({ m_axis_cq_tdata_reg,
@@ -54,14 +49,25 @@ end
 //	          m_axis_cq_tready_reg })
 //);
 
-logic clk156;
 
 // sfp_refclk_init
+logic clk156;
 sfp_refclk_init sfp_refclk_init0 (
 	.CLK(clk100),
-	.RST(sys_rst),
+	.RST(cold_reset),
 	.*
 );
+
+logic sys_rst;
+logic [13:0] cold_counter;
+always_ff @(posedge clk156) begin
+	if (cold_counter != 14'h3fff) begin
+		sys_rst <= 1'b1;
+		cold_counter <= cold_counter + 14'd1;
+	end else
+		sys_rst <= 1'b0;
+end
+
 
 // pcs_pma_conf
 logic [535:0] pcs_pma_configuration_vector;

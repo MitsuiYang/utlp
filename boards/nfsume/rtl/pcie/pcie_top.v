@@ -40,7 +40,7 @@ module pcie_top # (
 	input wire sys_rst_n,
 
 	input wire clk200,
-	input wire cold_reset,
+//	input wire cold_reset,
 	output wire [7:0] led,
 
 	output wire user_clk,
@@ -95,25 +95,6 @@ module pcie_top # (
   wire                   [KEEP_WIDTH-1:0]    s_axis_cc_tkeep;
   wire                                       s_axis_cc_tvalid;
   wire                              [3:0]    s_axis_cc_tready;
-
-// sora
-always @(posedge user_clk) begin
-	if(cold_reset) begin
-		m_axis_cq_tdata_reg  <= 0;
-		m_axis_cq_tuser_reg  <= 0;
-		m_axis_cq_tlast_reg  <= 0;
-		m_axis_cq_tkeep_reg  <= 0;
-		m_axis_cq_tvalid_reg <= 0;
-		m_axis_cq_tready_reg <= 0;
-	end else begin
-		m_axis_cq_tdata_reg  <= m_axis_cq_tdata;
-		m_axis_cq_tuser_reg  <= m_axis_cq_tuser;
-		m_axis_cq_tlast_reg  <= m_axis_cq_tlast;
-		m_axis_cq_tkeep_reg  <= m_axis_cq_tkeep;
-		m_axis_cq_tvalid_reg <= m_axis_cq_tvalid;
-		m_axis_cq_tready_reg <= m_axis_cq_tready;
-	end
-end
 
   //----------------------------------------------------------------------------------------------------------------//
   //  Configuration (CFG) Interface                                                                                 //
@@ -238,7 +219,7 @@ end
   wire                              [2:0]    cfg_interrupt_msi_function_number;
 
 
-wire sys_rst = (cold_reset | ~user_lnk_up | user_reset);
+//wire sys_rst = (cold_reset | ~user_lnk_up | user_reset);
 
 
   //----------------------------------------------------------------------------------------------------------------//
@@ -270,6 +251,25 @@ wire sys_rst = (cold_reset | ~user_lnk_up | user_reset);
       // Tie off for pipe_mmcm_rst_n   
       assign  	pipe_mmcm_rst_n                    =1'b1;
 
+
+// sora
+always @(posedge user_clk) begin
+	if(~sys_rst_n_c) begin
+		m_axis_cq_tdata_reg  <= 0;
+		m_axis_cq_tuser_reg  <= 0;
+		m_axis_cq_tlast_reg  <= 0;
+		m_axis_cq_tkeep_reg  <= 0;
+		m_axis_cq_tvalid_reg <= 0;
+		m_axis_cq_tready_reg <= 0;
+	end else begin
+		m_axis_cq_tdata_reg  <= m_axis_cq_tdata;
+		m_axis_cq_tuser_reg  <= m_axis_cq_tuser;
+		m_axis_cq_tlast_reg  <= m_axis_cq_tlast;
+		m_axis_cq_tkeep_reg  <= m_axis_cq_tkeep;
+		m_axis_cq_tvalid_reg <= m_axis_cq_tvalid;
+		m_axis_cq_tready_reg <= m_axis_cq_tready;
+	end
+end
 
 
 
