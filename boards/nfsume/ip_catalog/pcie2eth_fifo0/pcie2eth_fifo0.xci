@@ -6,7 +6,7 @@
   <spirit:version>1.0</spirit:version>
   <spirit:componentInstances>
     <spirit:componentInstance>
-      <spirit:instanceName>pcie2eth_fifo</spirit:instanceName>
+      <spirit:instanceName>pcie2eth_fifo0</spirit:instanceName>
       <spirit:componentRef spirit:vendor="xilinx.com" spirit:library="ip" spirit:name="fifo_generator" spirit:version="13.0"/>
       <spirit:configurableElementValues>
         <spirit:configurableElementValue spirit:referenceId="BUSIFPARAM_VALUE.CORE_CLK.FREQ_HZ">100000000</spirit:configurableElementValue>
@@ -224,7 +224,7 @@
         <spirit:configurableElementValue spirit:referenceId="PARAM_VALUE.BUSER_Width">0</spirit:configurableElementValue>
         <spirit:configurableElementValue spirit:referenceId="PARAM_VALUE.Clock_Enable_Type">Slave_Interface_Clock_Enable</spirit:configurableElementValue>
         <spirit:configurableElementValue spirit:referenceId="PARAM_VALUE.Clock_Type_AXI">Independent_Clock</spirit:configurableElementValue>
-        <spirit:configurableElementValue spirit:referenceId="PARAM_VALUE.Component_Name">pcie2eth_fifo</spirit:configurableElementValue>
+        <spirit:configurableElementValue spirit:referenceId="PARAM_VALUE.Component_Name">pcie2eth_fifo0</spirit:configurableElementValue>
         <spirit:configurableElementValue spirit:referenceId="PARAM_VALUE.DATA_WIDTH">64</spirit:configurableElementValue>
         <spirit:configurableElementValue spirit:referenceId="PARAM_VALUE.Data_Count">false</spirit:configurableElementValue>
         <spirit:configurableElementValue spirit:referenceId="PARAM_VALUE.Data_Count_Width">11</spirit:configurableElementValue>
@@ -457,3 +457,4 @@
     </spirit:componentInstance>
   </spirit:componentInstances>
 </spirit:design>
+

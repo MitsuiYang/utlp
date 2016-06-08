@@ -42,9 +42,10 @@ INC_SRC := $(wildcard ../../cores/pkg/*.sv)
 #VERILATOR_SRC := test/app_tb.cpp
 
 #IP_SRC := ip_catalog/pcie3_7x_0/pcie3_7x_0.xci
-IP_SRC := ip_catalog/pcie3_7x_0/pcie3_7x_0.xci \
+IP_SRC := ip_catalog/pcie3_7x_0/pcie3_7x_0.xci                    \
           ip_catalog/axi_10g_ethernet_0/axi_10g_ethernet_0.xci    \
-          ip_catalog/pcie2eth_fifo/pcie2eth_fifo.xci         \
+          ip_catalog/pcie2eth_fifo0/pcie2eth_fifo0.xci            \
+          ip_catalog/pcie2eth_fifo1/pcie2eth_fifo1.xci            \
           ip_catalog/si5324_regs_rom/si5324_regs_rom.xcix
 
 XDC_SRC := constraints/sume.xdc      \
@@ -99,7 +100,7 @@ program: $(outdir)/$(proj).bit
 synth-clean:
 	rm -f fsm_encoding.os usage_stat*
 	rm -rf build .Xil
-	rm -rf *.jou *.log *.mif *.hw  *.ip_user_files *.cache  *.sim
+	rm -rf *.jou *.log *.mif *.hw  *.ip_user_files *.cache  *.sim *.runs
 
 sim-clean:
 	rm -f wave.vcd

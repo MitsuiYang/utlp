@@ -97,7 +97,7 @@ eth_mac_conf eth_mac_conf0(.*);
 logic wr_en, rd_en;
 logic full, empty;
 logic [73:0] din, dout;
-pcie2eth_fifo pcie2eth_fifo0 (
+pcie2eth_fifo0 pcie2eth_fifo0_ins (
 	.rst(sys_rst),
 	.wr_clk(user_clk),    // data in (pcie)
 	.rd_clk(clk156),      // data out(eth)
