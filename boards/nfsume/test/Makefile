@@ -6,14 +6,15 @@ SIM_SRC := testbench.sv
 RTL_SRC := $(wildcard ../../../cores/pkg/*.sv)  \
            graycounter.v                        \
            asfifo.v                             \
-           pcie2eth_fifo.sv                     \
+           pcie2eth_fifo0.sv                    \
+           pcie2eth_fifo1.sv                    \
            axi_10g_ethernet_0.sv                \
            sfp_refclk_init.sv                   \
            ../rtl/eth/pcs_pma_conf.v            \
            ../rtl/eth/eth_mac_conf.v            \
-           ../rtl/eth/eth_send.sv               \
            ../rtl/eth/eth_tlptap.sv             \
            ../rtl/eth/eth_encap.sv              \
+           ../rtl/eth/eth_txmux.sv              \
            ../rtl/eth/eth_top.sv
 
 WFLAGS = -Wno-PINCONNECTEMPTY
