@@ -68,13 +68,20 @@ always_ff @(posedge clk200) begin
 end
 
 // PCIe
+wire user_clk;
 wire [C_DATA_WIDTH-1:0] m_axis_cq_tdata_reg;
 wire             [84:0] m_axis_cq_tuser_reg;
 wire                    m_axis_cq_tlast_reg;
 wire   [KEEP_WIDTH-1:0] m_axis_cq_tkeep_reg;
 wire                    m_axis_cq_tvalid_reg;
 wire             [21:0] m_axis_cq_tready_reg;
-wire user_clk;
+
+wire [C_DATA_WIDTH-1:0] s_axis_cc_tdata_reg;
+wire             [32:0] s_axis_cc_tuser_reg;
+wire                    s_axis_cc_tlast_reg;
+wire   [KEEP_WIDTH-1:0] s_axis_cc_tkeep_reg;
+wire                    s_axis_cc_tvalid_reg;
+wire              [3:0] s_axis_cc_tready_reg;
 pcie_top pcie_top0(.*);
 
 // Ethernet

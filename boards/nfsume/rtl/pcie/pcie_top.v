@@ -51,7 +51,14 @@ module pcie_top # (
 	output reg                    m_axis_cq_tlast_reg,
 	output reg   [KEEP_WIDTH-1:0] m_axis_cq_tkeep_reg,
 	output reg                    m_axis_cq_tvalid_reg,
-	output reg             [21:0] m_axis_cq_tready_reg
+	output reg             [21:0] m_axis_cq_tready_reg, 
+
+	output reg [C_DATA_WIDTH-1:0] s_axis_cc_tdata_reg,
+	output reg             [32:0] s_axis_cc_tuser_reg,
+	output reg                    s_axis_cc_tlast_reg,
+	output reg   [KEEP_WIDTH-1:0] s_axis_cc_tkeep_reg,
+	output reg                    s_axis_cc_tvalid_reg,
+	output reg              [3:0] s_axis_cc_tready_reg
 );
 
   // Local Parameters derived from user selection
@@ -271,6 +278,23 @@ always @(posedge user_clk) begin
 	end
 end
 
+always @(posedge user_clk) begin
+	if(~sys_rst_n_c) begin
+		s_axis_cc_tdata_reg  <= 0;
+		s_axis_cc_tuser_reg  <= 0;
+		s_axis_cc_tlast_reg  <= 0;
+		s_axis_cc_tkeep_reg  <= 0;
+		s_axis_cc_tvalid_reg <= 0;
+		s_axis_cc_tready_reg <= 0;
+	end else begin
+		s_axis_cc_tdata_reg  <= s_axis_cc_tdata;
+		s_axis_cc_tuser_reg  <= s_axis_cc_tuser;
+		s_axis_cc_tlast_reg  <= s_axis_cc_tlast;
+		s_axis_cc_tkeep_reg  <= s_axis_cc_tkeep;
+		s_axis_cc_tvalid_reg <= s_axis_cc_tvalid;
+		s_axis_cc_tready_reg <= s_axis_cc_tready;
+	end
+end
 
 
 // Support Level Wrapper

@@ -22,7 +22,7 @@ package pcie_tcap_pkg;
 	} pcie_tcaphdr;
 
 	function pcie_tcaphdr tcap_init();
-		tcap_init.ver = 2'b01;
+		tcap_init.ver = 3'b001;
 		tcap_init.dir = 0;
 		tcap_init.rsrv = 0;
 		tcap_init.ts = 0;

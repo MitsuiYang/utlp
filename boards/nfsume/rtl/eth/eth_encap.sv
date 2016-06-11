@@ -17,7 +17,8 @@ module eth_encap #(
 	parameter ip_daddr  = {8'd192, 8'd168, 8'd11, 8'd3},
 	parameter udp_sport = 16'h3776,
 	parameter udp_dport = 16'h3776
-)( input wire clk156,
+)(
+	input wire clk156,
 	input wire sys_rst,
 
 	// TLP packet (FIFO read)
@@ -86,7 +87,7 @@ always_comb begin
 	tx_pkt.hdr.udp.len = frame_len - ETH_HDR_LEN - IP_HDR_DEFLEN;
 	tx_pkt.hdr.udp.check = 0;
 
-	tx_pkt.hdr.tcap.ver = 2'b01;
+	tx_pkt.hdr.tcap.ver = 3'b001;
 	tx_pkt.hdr.tcap.dir = 0;
 	tx_pkt.hdr.tcap.rsrv = 0;
 	tx_pkt.hdr.tcap.ts = 40'haaaaaaaaaa;    // temporary

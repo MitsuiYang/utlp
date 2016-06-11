@@ -36,7 +36,14 @@ module eth_top #(
 	input logic                    m_axis_cq_tlast_reg,
 	input logic   [KEEP_WIDTH-1:0] m_axis_cq_tkeep_reg,
 	input logic                    m_axis_cq_tvalid_reg,
-	input logic             [21:0] m_axis_cq_tready_reg
+	input logic             [21:0] m_axis_cq_tready_reg,
+
+	input logic [C_DATA_WIDTH-1:0] s_axis_cc_tdata_reg,
+	input logic             [32:0] s_axis_cc_tuser_reg,
+	input logic                    s_axis_cc_tlast_reg,
+	input logic   [KEEP_WIDTH-1:0] s_axis_cc_tkeep_reg,
+	input logic                    s_axis_cc_tvalid_reg,
+	input logic              [3:0] s_axis_cc_tready_reg
 );
 
 //ila_0 ila_0_ins(
@@ -93,57 +100,116 @@ eth_mac_conf eth_mac_conf0(.*);
 //	.*
 //);
 
-// pcie2eth_fifo
-logic wr_en, rd_en;
-logic full, empty;
-logic [73:0] din, dout;
-pcie2eth_fifo0 pcie2eth_fifo0_ins (
-	.rst(sys_rst),
-	.wr_clk(user_clk),    // data in (pcie)
-	.rd_clk(clk156),      // data out(eth)
-	.*
-);
-
+logic fifo0_wr_en, fifo0_rd_en;
+logic fifo0_full, fifo0_empty;
+logic [73:0] fifo0_din, fifo0_dout;
 // eth_tlptap (PCIe to FIFO)
 eth_tlptap eth_tlptap0 (
 	// data in(tap)
 	.s_axis_tvalid(m_axis_cq_tvalid_reg),
-	.s_axis_tready(m_axis_cq_tready_reg),
+	.s_axis_tready(m_axis_cq_tready_reg[0]),
 	.s_axis_tdata (m_axis_cq_tdata_reg),
 	.s_axis_tkeep (m_axis_cq_tkeep_reg),
 	.s_axis_tlast (m_axis_cq_tlast_reg),
-	.s_axis_tuser (m_axis_cq_tuser_reg),
-
+	.s_axis_tuser (m_axis_cq_tuser_reg[0]),
 	// FIFO write
-	.wr_en(wr_en),
-	.din(din),
-	.full(full)
+	.wr_en(fifo0_wr_en),
+	.din(fifo0_din),
+	.full(fifo0_full)
 );
 
-// eth_encap (FIFO to eth_encap)
-logic        m_axis_encap_tvalid;
-logic        m_axis_encap_tready;
-logic [63:0] m_axis_encap_tdata;
-logic [ 7:0] m_axis_encap_tkeep;
-logic        m_axis_encap_tlast;
-logic        m_axis_encap_tuser;
+logic fifo1_wr_en, fifo1_rd_en;
+logic fifo1_full, fifo1_empty;
+logic [73:0] fifo1_din, fifo1_dout;
+// eth_tlptap (PCIe to FIFO)
+eth_tlptap eth_tlptap1 (
+	// data in(tap)
+	.s_axis_tvalid(s_axis_cc_tvalid_reg),
+	.s_axis_tready(s_axis_cc_tready_reg[0]),
+	.s_axis_tdata (s_axis_cc_tdata_reg),
+	.s_axis_tkeep (s_axis_cc_tkeep_reg),
+	.s_axis_tlast (s_axis_cc_tlast_reg),
+	.s_axis_tuser (s_axis_cc_tuser_reg[0]),
+	// FIFO write
+	.wr_en(fifo1_wr_en),
+	.din(fifo1_din),
+	.full(fifo1_full)
+);
+
+// pcie2eth_fifo0
+pcie2eth_fifo0 pcie2eth_fifo0_ins (
+	.rst(sys_rst),
+	.wr_clk(user_clk),    // data in (pcie)
+	.rd_clk(clk156),      // data out(eth)
+
+	.wr_en(fifo0_wr_en),
+	.rd_en(fifo0_rd_en),
+	.full(fifo0_full),
+	.empty(fifo0_empty),
+	.din(fifo0_din),
+	.dout(fifo0_dout)
+);
+
+// pcie2eth_fifo1
+pcie2eth_fifo1 pcie2eth_fifo1_ins (
+	.rst(sys_rst),
+	.wr_clk(user_clk),    // data in (pcie)
+	.rd_clk(clk156),      // data out(eth)
+
+	.wr_en(fifo1_wr_en),
+	.rd_en(fifo1_rd_en),
+	.full(fifo1_full),
+	.empty(fifo1_empty),
+	.din(fifo1_din),
+	.dout(fifo1_dout)
+);
+
+// eth_txmux
+logic out_rd_en;
+logic [73:0] out_dout;
+logic out_empty;
+eth_txmux eth_txmux0 (
+	// data in: fifo0
+	.fifo0_rd_en(fifo0_rd_en),
+	.fifo0_dout (fifo0_dout),
+	.fifo0_empty(fifo0_empty),
+
+	// data in: fifo1
+	.fifo1_rd_en(fifo1_rd_en),
+	.fifo1_dout (fifo1_dout),
+	.fifo1_empty(fifo1_empty),
+
+	// data out
+	.rd_en(out_rd_en),
+	.dout (out_dout),
+	.empty(out_empty)
+);
+
+// eth_encap0 (FIFO to eth_encap)
+logic        m_axis_fifo_tvalid;
+logic        m_axis_fifo_tready;
+logic [63:0] m_axis_fifo_tdata;
+logic [ 7:0] m_axis_fifo_tkeep;
+logic        m_axis_fifo_tlast;
+logic        m_axis_fifo_tuser;
 eth_encap eth_encap0 (
 	.clk156(clk156),
 	.sys_rst(sys_rst),
 
-	// FIFO read
-	.rd_en(rd_en),
-	.dout(dout),
-	.empty(empty),
+	// FIFO0 read
+	.rd_en(out_rd_en),
+	.dout (out_dout),
+	.empty(out_empty),
 
 	// data out(encap)
-	.m_axis_tvalid(m_axis_encap_tvalid),
-	.m_axis_tready(m_axis_encap_tready),
-	.m_axis_tdata (m_axis_encap_tdata),
-	.m_axis_tkeep (m_axis_encap_tkeep),
-	.m_axis_tlast (m_axis_encap_tlast),
-	.m_axis_tuser (m_axis_encap_tuser)
+	.m_axis_tvalid(m_axis_fifo_tvalid),
+	.m_axis_tready(m_axis_fifo_tready),
+	.m_axis_tdata (m_axis_fifo_tdata),
+	.m_axis_tkeep (m_axis_fifo_tkeep),
+	.m_axis_tlast (m_axis_fifo_tlast),
+	.m_axis_tuser (m_axis_fifo_tuser)
 );
+
 
 // Ethernet IP
 logic txusrclk_out;
@@ -184,12 +250,12 @@ axi_10g_ethernet_0 axi_10g_ethernet_0_ins (
 	.resetdone_out(),
 
 	// eth tx
-	.s_axis_tx_tready(m_axis_encap_tready),
-	.s_axis_tx_tdata (m_axis_encap_tdata),
-	.s_axis_tx_tkeep (m_axis_encap_tkeep),
-	.s_axis_tx_tlast (m_axis_encap_tlast),
-	.s_axis_tx_tvalid(m_axis_encap_tvalid),
-	.s_axis_tx_tuser (m_axis_encap_tuser),
+	.s_axis_tx_tready(m_axis_fifo_tready),
+	.s_axis_tx_tdata (m_axis_fifo_tdata),
+	.s_axis_tx_tkeep (m_axis_fifo_tkeep),
+	.s_axis_tx_tlast (m_axis_fifo_tlast),
+	.s_axis_tx_tvalid(m_axis_fifo_tvalid),
+	.s_axis_tx_tuser (m_axis_fifo_tuser),
 	
 	// eth rx
 	.m_axis_rx_tdata(),

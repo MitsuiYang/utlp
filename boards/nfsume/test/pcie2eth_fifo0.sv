@@ -1,5 +1,5 @@
 `default_nettype none
-module pcie2eth_fifo (
+module pcie2eth_fifo0 (
 	input  wire rst,
 	input  wire wr_clk,
 	input  wire rd_clk,
