@@ -90,25 +90,29 @@ always_comb begin
 	tx_pkt.hdr.tcap.ver = 3'b001;
 	tx_pkt.hdr.tcap.dir = 0;
 	tx_pkt.hdr.tcap.rsrv = 0;
-	tx_pkt.hdr.tcap.ts = 40'haaaaaaaaaa;    // temporary
+//	tx_pkt.hdr.tcap.ts = 40'haaaaaaaaaa;    // temporary
 end
 
 
 logic [15:0] tx_count, tx_count_next;
+logic [39:0] tcap_seq, tcap_seq_next;
 enum logic [1:0] { TX_IDLE, TX_HDR, TX_DATA } tx_state = TX_IDLE, tx_state_next;
 always_ff @(posedge clk156) begin
 	if (sys_rst) begin
 		tx_state <= TX_IDLE;
 		tx_count <= 0;
+		tcap_seq <= 0;
 	end else begin
 		tx_state <= tx_state_next;
 		tx_count <= tx_count_next;
+		tcap_seq <= tcap_seq_next;
 	end
 end
 
 always_comb begin
 	tx_state_next = tx_state;
 	tx_count_next = tx_count;
+	tcap_seq_next = tcap_seq;
 
 	rd_en = 0;
 
@@ -117,6 +121,7 @@ always_comb begin
 			if (m_axis_tready && !empty) begin
 				tx_state_next = TX_HDR;
 				tx_count_next = 0;
+				tcap_seq_next = tcap_seq + 1;
 			end
 		end
 		TX_HDR: begin
@@ -139,6 +144,7 @@ always_comb begin
 			tx_state_next = TX_IDLE;
 	endcase
 end
+always_comb tx_pkt.hdr.tcap.ts = tcap_seq;
 
 // tvalid
 always_comb m_axis_tvalid = (tx_state == TX_HDR || tx_state == TX_DATA);
