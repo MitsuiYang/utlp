@@ -1,3 +1,5 @@
+/* by macchan@sfc.wide.ad.jp */
+
 #define _LARGEFILE64_SOURCE
 #include <stdio.h>
 #include <stdlib.h>

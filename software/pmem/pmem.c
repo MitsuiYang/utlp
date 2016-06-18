@@ -1,3 +1,5 @@
+/* by macchan@sfc.wide.ad.jp */
+
 #include <linux/module.h>
 #include <linux/miscdevice.h>
 #include <linux/fs.h>

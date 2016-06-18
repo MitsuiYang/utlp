@@ -1,3 +1,5 @@
+/* by macchan@sfc.wide.ad.jp */
+
 #include <linux/semaphore.h>
 #include <linux/etherdevice.h>
 #include <linux/module.h>
