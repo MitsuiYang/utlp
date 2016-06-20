@@ -60,7 +60,7 @@ module asfifo
     //Addreses (Gray counters) logic:
     graycounter #(
 		.COUNTER_WIDTH( ADDRESS_WIDTH )
-    ) GrayCounter_pWr (
+    ) GrayCounter_pWr0 (
         .GrayCount_out(pNextWordToWrite),
         .Enable_in(NextWriteAddressEn),
         .rst(rst),
@@ -70,7 +70,7 @@ module asfifo
        
     graycounter #(
 		.COUNTER_WIDTH( ADDRESS_WIDTH )
-    ) GrayCounter_pRd (
+    ) GrayCounter_pRd0 (
         .GrayCount_out(pNextWordToRead),
         .Enable_in(NextReadAddressEn),
         .rst(rst),

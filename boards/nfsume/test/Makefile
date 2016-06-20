@@ -10,6 +10,7 @@ RTL_SRC := $(wildcard ../../../cores/pkg/*.sv)  \
            pcie2eth_fifo1.sv                    \
            axi_10g_ethernet_0.sv                \
            sfp_refclk_init.sv                   \
+           host/host_pio.sv                     \
            ../rtl/eth/pcs_pma_conf.v            \
            ../rtl/eth/eth_mac_conf.v            \
            ../rtl/eth/eth_tlptap.sv             \
@@ -17,7 +18,7 @@ RTL_SRC := $(wildcard ../../../cores/pkg/*.sv)  \
            ../rtl/eth/eth_txmux.sv              \
            ../rtl/eth/eth_top.sv
 
-WFLAGS = -Wno-PINCONNECTEMPTY
+WFLAGS = -Wall -Wno-PINCONNECTEMPTY -Wno-UNUSED -Wno-UNDRIVEN
 
 all: run
 

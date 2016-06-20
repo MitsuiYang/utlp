@@ -12,12 +12,14 @@ module pcie2eth_fifo1 (
 	output wire full
 );
 
+`ifdef zero
 asfifo #(
 	.DATA_WIDTH(74),
 	.ADDRESS_WIDTH(7)
 ) asfifo0 (
 	.*
 );
+`endif
 
 endmodule
 `default_nettype wire

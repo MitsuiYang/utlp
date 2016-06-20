@@ -1,6 +1,8 @@
 `timescale 1ns / 1ps
 
 module eth_top #(
+	parameter cold_reset_count           = 14'h3fff,
+
 	parameter PL_LINK_CAP_MAX_LINK_WIDTH = 2,
 	parameter C_DATA_WIDTH               = 64,
 	parameter KEEP_WIDTH                 = C_DATA_WIDTH / 32,
@@ -68,7 +70,7 @@ sfp_refclk_init sfp_refclk_init0 (
 logic sys_rst;
 logic [13:0] cold_counter;
 always_ff @(posedge clk156) begin
-	if (cold_counter != 14'h3fff) begin
+	if (cold_counter != cold_reset_count) begin
 		sys_rst <= 1'b1;
 		cold_counter <= cold_counter + 14'd1;
 	end else
