@@ -1,3 +1,6 @@
+import utils_pkg::*;
+import endian_pkg::*;
+
 module axi_10g_ethernet_0 (
 	input  logic         tx_axis_aresetn,
 	input  logic         rx_axis_aresetn,
@@ -33,12 +36,12 @@ module axi_10g_ethernet_0 (
 	input  logic         refclk_p,
 	input  logic         refclk_n,
 	input  logic         reset,
-	input  logic  [63:0] s_axis_tx_tdata,
-	input  logic   [7:0] s_axis_tx_tkeep,
-	input  logic         s_axis_tx_tlast,
-	output logic         s_axis_tx_tready,
-	input  logic   [0:0] s_axis_tx_tuser,
-	input  logic         s_axis_tx_tvalid,
+	input  logic  [63:0] s_axis_tx_tdata       /*verilator public*/,
+	input  logic   [7:0] s_axis_tx_tkeep       /*verilator public*/,
+	input  logic         s_axis_tx_tlast       /*verilator public*/,
+	output logic         s_axis_tx_tready      /*verilator public*/,
+	input  logic   [0:0] s_axis_tx_tuser       /*verilator public*/,
+	input  logic         s_axis_tx_tvalid      /*verilator public*/,
 	input  logic  [15:0] s_axis_pause_tdata,
 	input  logic         s_axis_pause_tvalid,
 	output logic  [63:0] m_axis_rx_tdata,
@@ -68,6 +71,13 @@ always_ff @(posedge refclk_p) begin
 		end
 	end
 end
+
+wire        result_tvalid = s_axis_tx_tvalid;
+wire [ 7:0] result_tkeep  = bit_reverse8(s_axis_tx_tkeep);
+wire [63:0] result_tdata  = endian_conv64(s_axis_tx_tdata);
+
+wire hoge = result_tvalid & result_tkeep[0];
+
 
 endmodule
 

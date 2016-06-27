@@ -20,7 +20,7 @@ RTL_SRC := $(wildcard ../../../cores/pkg/*.sv)  \
 
 WFLAGS = -Wall -Wno-PINCONNECTEMPTY -Wno-UNUSED -Wno-UNDRIVEN
 
-all: run
+all: sim
 
 lint: $(SIM_SRC) $(RTL_SRC)
 	verilator $(WFLAGS) -Wall --lint-only --cc --top-module $(sim_top) -sv $(SIM_SRC) $(RTL_SRC)
