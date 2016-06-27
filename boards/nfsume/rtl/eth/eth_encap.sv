@@ -96,16 +96,19 @@ end
 
 logic [15:0] tx_count, tx_count_next;
 logic [39:0] tcap_seq, tcap_seq_next;
+logic rd_en_shift;
 enum logic [1:0] { TX_IDLE, TX_HDR, TX_DATA } tx_state = TX_IDLE, tx_state_next;
 always_ff @(posedge clk156) begin
 	if (sys_rst) begin
 		tx_state <= TX_IDLE;
 		tx_count <= 0;
 		tcap_seq <= 0;
+		rd_en <= 0;
 	end else begin
 		tx_state <= tx_state_next;
 		tx_count <= tx_count_next;
 		tcap_seq <= tcap_seq_next;
+		rd_en <= rd_en_shift;
 	end
 end
 
@@ -114,7 +117,7 @@ always_comb begin
 	tx_count_next = tx_count;
 	tcap_seq_next = tcap_seq;
 
-	rd_en = 0;
+	rd_en_shift = 0;
 
 	case(tx_state)
 		TX_IDLE: begin
@@ -129,14 +132,16 @@ always_comb begin
 				tx_count_next = tx_count + 1;
 				if (tx_count == 5) begin
 					tx_state_next = TX_DATA;
+					rd_en_shift = 1;
 				end
 			end
 		end
 		TX_DATA: begin
 			if (m_axis_tready) begin
-				rd_en = 1;
 				if (m_axis_tlast) begin
 					tx_state_next = TX_IDLE;
+				end else begin
+					rd_en_shift = 1;
 				end
 			end
 		end
@@ -146,58 +151,31 @@ always_comb begin
 end
 always_comb tx_pkt.hdr.tcap.ts = tcap_seq;
 
-// tvalid
-always_comb m_axis_tvalid = (tx_state == TX_HDR || tx_state == TX_DATA);
-
-// tkeep
 always_comb begin
-	if (tx_state == TX_HDR) begin
-		case (tx_count)
-			16'h0: m_axis_tkeep = 8'b1111_1111;
-			16'h1: m_axis_tkeep = 8'b1111_1111;
-			16'h2: m_axis_tkeep = 8'b1111_1111;
-			16'h3: m_axis_tkeep = 8'b1111_1111;
-			16'h4: m_axis_tkeep = 8'b1111_1111;
-			16'h5: m_axis_tkeep = 8'b1111_1111;
-			default:
-				m_axis_tkeep = 8'b0;
-		endcase
-	end else if (tx_state == TX_DATA) begin
-		m_axis_tkeep = dout[73:66];
-	end
+	case (tx_state)
+		TX_HDR: begin
+			m_axis_tvalid = 1'b1;
+			m_axis_tkeep = 8'b1111_1111;
+			case (tx_count)
+				16'h0: m_axis_tdata = endian_conv64(tx_pkt.raw[5]);
+				16'h1: m_axis_tdata = endian_conv64(tx_pkt.raw[4]);
+				16'h2: m_axis_tdata = endian_conv64(tx_pkt.raw[3]);
+				16'h3: m_axis_tdata = endian_conv64(tx_pkt.raw[2]);
+				16'h4: m_axis_tdata = endian_conv64(tx_pkt.raw[1]);
+				16'h5: m_axis_tdata = endian_conv64(tx_pkt.raw[0]);
+				default: m_axis_tdata = 64'b0;
+			endcase
+		end
+		TX_DATA: begin
+			m_axis_tvalid = 1'b1;
+			{m_axis_tkeep, m_axis_tdata, m_axis_tlast, m_axis_tuser} = dout;
+		end
+		default: begin
+			m_axis_tvalid = 1'b0;
+			{m_axis_tkeep, m_axis_tdata, m_axis_tlast, m_axis_tuser} = 74'b0;
+		end
+	endcase
 end
-
-// tdata
-logic [63:0] m_axis_tdata_reg;
-always_comb begin
-	if (tx_state == TX_HDR) begin
-		case (tx_count)
-			16'h0: m_axis_tdata_reg = tx_pkt.raw[5];
-			16'h1: m_axis_tdata_reg = tx_pkt.raw[4];
-			16'h2: m_axis_tdata_reg = tx_pkt.raw[3];
-			16'h3: m_axis_tdata_reg = tx_pkt.raw[2];
-			16'h4: m_axis_tdata_reg = tx_pkt.raw[1];
-			16'h5: m_axis_tdata_reg = tx_pkt.raw[0];
-			default:
-				m_axis_tdata_reg = 64'b0;
-		endcase
-	end else if (tx_state == TX_DATA) begin
-		m_axis_tdata_reg = dout[65:2];
-	end
-end
-always_comb begin
-	if (tx_state == TX_HDR) begin
-		m_axis_tdata = endian_conv64(m_axis_tdata_reg);
-	end else if (tx_state == TX_DATA) begin
-		m_axis_tdata = m_axis_tdata_reg;
-	end
-end
-
-// tlast
-always_comb m_axis_tlast = (tx_state == TX_DATA) ? dout[1] : 1'b0;
-
-// tuser
-always_comb m_axis_tuser = (tx_state == TX_DATA) ? dout[0] : 1'b0;
 
 endmodule
 
