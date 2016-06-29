@@ -94,21 +94,18 @@ always_comb begin
 end
 
 
+enum logic [1:0] { TX_IDLE, TX_HDR, TX_DATA } tx_state = TX_IDLE, tx_state_next;
 logic [15:0] tx_count, tx_count_next;
 logic [39:0] tcap_seq, tcap_seq_next;
-logic rd_en_shift;
-enum logic [1:0] { TX_IDLE, TX_HDR, TX_DATA } tx_state = TX_IDLE, tx_state_next;
 always_ff @(posedge clk156) begin
 	if (sys_rst) begin
 		tx_state <= TX_IDLE;
 		tx_count <= 0;
 		tcap_seq <= 0;
-		rd_en <= 0;
 	end else begin
 		tx_state <= tx_state_next;
 		tx_count <= tx_count_next;
 		tcap_seq <= tcap_seq_next;
-		rd_en <= rd_en_shift;
 	end
 end
 
@@ -117,7 +114,7 @@ always_comb begin
 	tx_count_next = tx_count;
 	tcap_seq_next = tcap_seq;
 
-	rd_en_shift = 0;
+	rd_en = 0;
 
 	case(tx_state)
 		TX_IDLE: begin
@@ -132,16 +129,14 @@ always_comb begin
 				tx_count_next = tx_count + 1;
 				if (tx_count == 5) begin
 					tx_state_next = TX_DATA;
-					rd_en_shift = 1;
 				end
 			end
 		end
 		TX_DATA: begin
 			if (m_axis_tready) begin
+				rd_en = 1;
 				if (m_axis_tlast) begin
 					tx_state_next = TX_IDLE;
-				end else begin
-					rd_en_shift = 1;
 				end
 			end
 		end

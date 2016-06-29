@@ -26,7 +26,7 @@ RTL_SRC := rtl/pcie/support/pcie3_7x_0_pipe_clock.v                          \
            rtl/eth/eth_mac_conf.v                                            \
            rtl/eth/eth_tlptap.sv                                             \
            rtl/eth/eth_encap.sv                                              \
-           rtl/eth/eth_txmux.sv                                              \
+           rtl/eth/eth_txarb.sv                                              \
            rtl/eth/eth_top.sv                                                \
            rtl/top.sv
 
@@ -47,6 +47,7 @@ IP_SRC := ip_catalog/pcie3_7x_0/pcie3_7x_0.xci                    \
           ip_catalog/axi_10g_ethernet_0/axi_10g_ethernet_0.xci    \
           ip_catalog/pcie2eth_fifo0/pcie2eth_fifo0.xci            \
           ip_catalog/pcie2eth_fifo1/pcie2eth_fifo1.xci            \
+          ip_catalog/arb2encap_fifo/arb2encap_fifo.xci            \
           ip_catalog/si5324_regs_rom/si5324_regs_rom.xcix
 
 XDC_SRC := constraints/sume.xdc      \

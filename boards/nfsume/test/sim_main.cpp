@@ -104,7 +104,7 @@ int main(int argc, char **argv)
 		if ((t % PCIE_REF_CLK) == 0)
 			sim->user_clk = !sim->user_clk;
 		
-		if (t > SFP_CLK * 8)
+		if (t > SFP_CLK * 0x1f * 2)
 			sim->cold_reset = 0;
 
 		if (t > SIM_TIME)

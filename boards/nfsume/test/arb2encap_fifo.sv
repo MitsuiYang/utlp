@@ -1,8 +1,7 @@
 `default_nettype none
-module pcie2eth_fifo1 (
-	input  wire rst,
-	input  wire wr_clk,
-	input  wire rd_clk,
+module arb2encap_fifo (
+	input  wire srst,
+	input  wire clk,
 	input  wire rd_en,
 	input  wire wr_en,
 
@@ -15,7 +14,10 @@ module pcie2eth_fifo1 (
 asfifo #(
 	.DATA_WIDTH(74),
 	.ADDRESS_WIDTH(7)
-) asfifo1 (
+) asfifo_arb (
+	.rst(srst),
+	.rd_clk(clk),
+	.wr_clk(clk),
 	.*
 );
 

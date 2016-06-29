@@ -34,7 +34,7 @@ wire             [32:0] s_axis_cc_tuser_reg;
 wire                    s_axis_cc_tlast_reg;
 wire   [KEEP_WIDTH-1:0] s_axis_cc_tkeep_reg;
 wire                    s_axis_cc_tvalid_reg;
-wire              [3:0] s_axis_cc_tready_reg = {4{tmp_cq_tready}};
+wire              [3:0] s_axis_cc_tready_reg = {4{tmp_cc_tready}};
 host_pio host_pio0 (
 	.user_clk   (user_clk),
 	.reset      (cold_reset),

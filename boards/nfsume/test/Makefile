@@ -8,17 +8,19 @@ RTL_SRC := $(wildcard ../../../cores/pkg/*.sv)  \
            asfifo.v                             \
            pcie2eth_fifo0.sv                    \
            pcie2eth_fifo1.sv                    \
+           arb2encap_fifo.sv                    \
            axi_10g_ethernet_0.sv                \
            sfp_refclk_init.sv                   \
            host/host_pio.sv                     \
            ../rtl/eth/pcs_pma_conf.v            \
            ../rtl/eth/eth_mac_conf.v            \
            ../rtl/eth/eth_tlptap.sv             \
+           ../rtl/eth/eth_txarb.sv              \
            ../rtl/eth/eth_encap.sv              \
-           ../rtl/eth/eth_txmux.sv              \
            ../rtl/eth/eth_top.sv
 
-WFLAGS = -Wall -Wno-PINCONNECTEMPTY -Wno-UNUSED -Wno-UNDRIVEN
+WFLAGS = -Wall -Wno-PINCONNECTEMPTY -Wno-UNUSED -Wno-UNDRIVEN --report-unoptflat
+#WFLAGS = -Wall 
 
 all: sim
 

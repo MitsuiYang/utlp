@@ -87,25 +87,10 @@ logic [79:0] mac_tx_configuration_vector;
 logic [79:0] mac_rx_configuration_vector;
 eth_mac_conf eth_mac_conf0(.*);
 
-// eth_send
-//logic        s_axis_tx_tvalid;
-//logic        s_axis_tx_tready;
-//logic [63:0] s_axis_tx_tdata;
-//logic [ 7:0] s_axis_tx_tkeep;
-//logic        s_axis_tx_tlast;
-//logic        s_axis_tx_tuser;
-//eth_send #(
-//	.ifg_len(ifg_len)
-//) eth_send0 (
-//	.clk156(user_clk),
-//	.reset(cold_reset),
-//	.*
-//);
-
+// eth_tlptap (PCIe to FIFO)
 logic fifo0_wr_en, fifo0_rd_en;
 logic fifo0_full, fifo0_empty;
 logic [73:0] fifo0_din, fifo0_dout;
-// eth_tlptap (PCIe to FIFO)
 eth_tlptap eth_tlptap0 (
 	// data in(tap)
 	.s_axis_tvalid(m_axis_cq_tvalid_reg),
@@ -120,10 +105,10 @@ eth_tlptap eth_tlptap0 (
 	.full(fifo0_full)
 );
 
+// eth_tlptap (PCIe to FIFO)
 logic fifo1_wr_en, fifo1_rd_en;
 logic fifo1_full, fifo1_empty;
 logic [73:0] fifo1_din, fifo1_dout;
-// eth_tlptap (PCIe to FIFO)
 eth_tlptap eth_tlptap1 (
 	// data in(tap)
 	.s_axis_tvalid(s_axis_cc_tvalid_reg),
@@ -166,11 +151,14 @@ pcie2eth_fifo1 pcie2eth_fifo1_ins (
 	.dout(fifo1_dout)
 );
 
-// eth_txmux
-logic out_rd_en;
-logic [73:0] out_dout;
-logic out_empty;
-eth_txmux eth_txmux0 (
+// eth_txarb
+logic [73:0] out_din;
+logic out_wr_en;
+logic out_full;
+eth_txarb eth_txarb0 (
+	.clk(clk156),
+	.rst(sys_rst),
+
 	// data in: fifo0
 	.fifo0_rd_en(fifo0_rd_en),
 	.fifo0_dout (fifo0_dout),
@@ -182,9 +170,25 @@ eth_txmux eth_txmux0 (
 	.fifo1_empty(fifo1_empty),
 
 	// data out
+	.wr_en(out_wr_en),
+	.din (out_din),
+	.full(out_full)
+);
+
+// arb2encap_fifo
+logic [73:0] out_dout;
+logic out_rd_en;
+logic out_empty;
+arb2encap_fifo arb2encap_fifo_ins (
+	.srst(sys_rst),
+	.clk(clk156),
+
+	.wr_en(out_wr_en),
 	.rd_en(out_rd_en),
-	.dout (out_dout),
-	.empty(out_empty)
+	.full(out_full),
+	.empty(out_empty),
+	.din(out_din),
+	.dout(out_dout)
 );
 
 // eth_encap0 (FIFO to eth_encap)
