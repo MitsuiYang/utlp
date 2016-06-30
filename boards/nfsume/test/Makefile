@@ -11,7 +11,7 @@ RTL_SRC := $(wildcard ../../../cores/pkg/*.sv)  \
            arb2encap_fifo.sv                    \
            axi_10g_ethernet_0.sv                \
            sfp_refclk_init.sv                   \
-           host/host_pio.sv                     \
+           host/host_pio_wr.sv                  \
            ../rtl/eth/pcs_pma_conf.v            \
            ../rtl/eth/eth_mac_conf.v            \
            ../rtl/eth/eth_tlptap.sv             \

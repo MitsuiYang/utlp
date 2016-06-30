@@ -1,4 +1,4 @@
-module host_pio #(
+module host_pio_rd #(
 	parameter PL_LINK_CAP_MAX_LINK_WIDTH = 2,
 	parameter C_DATA_WIDTH               = 64,
 	parameter KEEP_WIDTH                 = C_DATA_WIDTH / 32
@@ -26,7 +26,8 @@ always_ff @(posedge user_clk) begin
 	if (reset) begin
 		count <= 0;
 	end else begin
-		count <= count + 1;
+		if (count != 16)
+			count <= count + 1;
 	end
 end
 
