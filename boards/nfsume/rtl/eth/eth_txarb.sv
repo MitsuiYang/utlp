@@ -22,6 +22,7 @@ wire fifo0_tlast = fifo0_dout[1];
 wire fifo1_tlast = fifo1_dout[1];
 
 enum logic [1:0] { IDLE, FIFO0, FIFO1 } state;
+logic wr_en_shift;
 always_ff @(posedge clk) begin
 	if (rst) begin
 		state       <= IDLE;
@@ -29,12 +30,15 @@ always_ff @(posedge clk) begin
 		fifo1_rd_en <= 1'b0;
 		din         <= 74'b0;
 		wr_en       <= 1'b0;
+		wr_en_shift <= 1'b0;
 	end else begin
+		wr_en <= wr_en_shift;
+
 		case (state)
 			IDLE: begin
 				fifo0_rd_en <= 1'b0;
 				fifo1_rd_en <= 1'b0;
-				wr_en       <= 1'b0;
+				wr_en_shift <= 1'b0;
 				if (!full && !fifo0_empty) begin
 					state <= FIFO0;
 				end else if (!full && !fifo1_empty) begin
@@ -43,17 +47,21 @@ always_ff @(posedge clk) begin
 			end
 			FIFO0: begin
 				fifo0_rd_en <= 1'b1;
-				wr_en       <= 1'b1;
+				wr_en_shift <= 1'b1;
 				din         <= fifo0_dout;
 				if (fifo0_tlast) begin
+					fifo0_rd_en <= 1'b0;
+					wr_en_shift <= 1'b0;
 					state <= IDLE;
 				end
 			end
 			FIFO1: begin
 				fifo1_rd_en <= 1'b1;
-				wr_en       <= 1'b1;
+				wr_en_shift <= 1'b1;
 				din         <= fifo1_dout;
 				if (fifo1_tlast) begin
+					fifo1_rd_en <= 1'b0;
+					wr_en_shift <= 1'b0;
 					state <= IDLE;
 				end
 			end
