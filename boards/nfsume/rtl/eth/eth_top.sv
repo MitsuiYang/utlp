@@ -237,7 +237,7 @@ axi_10g_ethernet_0 axi_10g_ethernet_0_ins (
 	.coreclk_out(clk156),
 	.refclk_n(SFP_CLK_N),
 	.refclk_p(SFP_CLK_P),
-	.dclk(clk156),
+	.dclk(clk100),
 	.reset(sys_rst),
 	.rx_statistics_vector(),
 	.rxn(ETH1_TX_N),
