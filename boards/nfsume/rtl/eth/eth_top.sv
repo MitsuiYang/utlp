@@ -233,11 +233,12 @@ logic [1:0] mac_status_vector;
 logic [7:0] pcspma_status;
 logic rx_statistics_valid;
 logic tx_statistics_valid;
+wire zero = 1'b0;
 axi_10g_ethernet_0 axi_10g_ethernet_0_ins (
 	.coreclk_out(clk156),
 	.refclk_n(SFP_CLK_N),
 	.refclk_p(SFP_CLK_P),
-	.dclk(clk156),
+	.dclk(clk100),
 	.reset(sys_rst),
 	.rx_statistics_vector(),
 	.rxn(ETH1_TX_N),
@@ -247,7 +248,7 @@ axi_10g_ethernet_0 axi_10g_ethernet_0_ins (
 	.signal_detect(!ETH1_RX_LOS),
 	.tx_disable(ETH1_TX_DISABLE),
 	.tx_fault(ETH1_TX_FAULT),
-	.tx_ifg_delay(8'd8),
+	.tx_ifg_delay(8'd0),
 	.tx_statistics_vector(),
 	.txn(ETH1_RX_N),
 	.txp(ETH1_RX_P),
@@ -261,7 +262,7 @@ axi_10g_ethernet_0 axi_10g_ethernet_0_ins (
 	.s_axis_tx_tkeep (m_axis_fifo_tkeep),
 	.s_axis_tx_tlast (m_axis_fifo_tlast),
 	.s_axis_tx_tvalid(m_axis_fifo_tvalid),
-	.s_axis_tx_tuser (m_axis_fifo_tuser),
+	.s_axis_tx_tuser (m_axis_fifo_tuser & zero),
 	
 	// eth rx
 	.m_axis_rx_tdata(),
@@ -271,8 +272,8 @@ axi_10g_ethernet_0 axi_10g_ethernet_0_ins (
 	.m_axis_rx_tvalid(),
 
 	.sim_speedup_control(1'b0),
-	.rx_axis_aresetn(1'b1),
-	.tx_axis_aresetn(1'b1),
+	.rx_axis_aresetn(~sys_rst),
+	.tx_axis_aresetn(~sys_rst),
 
 	.*
 );
