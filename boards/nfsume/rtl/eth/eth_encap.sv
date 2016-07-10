@@ -147,6 +147,11 @@ end
 always_comb tx_pkt.hdr.tcap.ts = tcap_seq;
 
 always_comb begin
+	m_axis_tkeep = 8'b0;
+	m_axis_tdata = 64'b0;
+	m_axis_tlast = 1'b0;
+	m_axis_tuser = 1'b0;
+
 	case (tx_state)
 		TX_HDR: begin
 			m_axis_tvalid = 1'b1;
@@ -167,7 +172,6 @@ always_comb begin
 		end
 		default: begin
 			m_axis_tvalid = 1'b0;
-			{m_axis_tkeep, m_axis_tdata, m_axis_tlast, m_axis_tuser} = 74'b0;
 		end
 	endcase
 end
