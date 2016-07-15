@@ -29,6 +29,9 @@ always_comb begin
 	if (!full) begin
 		wr_en = s_axis_tready && s_axis_tvalid;
 		din = {tmp_tkeep, s_axis_tdata, s_axis_tlast, s_axis_tuser};
+	end else begin
+		wr_en = 1'b0;
+		din = 74'b0;
 	end
 end
 

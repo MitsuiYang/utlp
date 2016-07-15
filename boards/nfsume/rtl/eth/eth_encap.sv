@@ -1,3 +1,4 @@
+import utils_pkg::*;
 import endian_pkg::*;
 import ethernet_pkg::*;
 import ip_pkg::*;
@@ -146,31 +147,39 @@ always_comb begin
 end
 always_comb tx_pkt.hdr.tcap.ts = tcap_seq;
 
+logic [7:0] m_axis_tkeep_tmp;
+logic [63:0] m_axis_tdata_tmp;
 always_comb begin
+	m_axis_tkeep_tmp = 8'b0;
+	m_axis_tdata_tmp = 64'b0;
+	m_axis_tlast = 1'b0;
+	m_axis_tuser = 1'b0;
+
 	case (tx_state)
 		TX_HDR: begin
 			m_axis_tvalid = 1'b1;
-			m_axis_tkeep = 8'b1111_1111;
+			m_axis_tkeep_tmp = 8'b1111_1111;
 			case (tx_count)
-				16'h0: m_axis_tdata = endian_conv64(tx_pkt.raw[5]);
-				16'h1: m_axis_tdata = endian_conv64(tx_pkt.raw[4]);
-				16'h2: m_axis_tdata = endian_conv64(tx_pkt.raw[3]);
-				16'h3: m_axis_tdata = endian_conv64(tx_pkt.raw[2]);
-				16'h4: m_axis_tdata = endian_conv64(tx_pkt.raw[1]);
-				16'h5: m_axis_tdata = endian_conv64(tx_pkt.raw[0]);
-				default: m_axis_tdata = 64'b0;
+				16'h0: m_axis_tdata_tmp = tx_pkt.raw[5];
+				16'h1: m_axis_tdata_tmp = tx_pkt.raw[4];
+				16'h2: m_axis_tdata_tmp = tx_pkt.raw[3];
+				16'h3: m_axis_tdata_tmp = tx_pkt.raw[2];
+				16'h4: m_axis_tdata_tmp = tx_pkt.raw[1];
+				16'h5: m_axis_tdata_tmp = tx_pkt.raw[0];
+				default: m_axis_tdata_tmp = 64'b0;
 			endcase
 		end
 		TX_DATA: begin
 			m_axis_tvalid = 1'b1;
-			{m_axis_tkeep, m_axis_tdata, m_axis_tlast, m_axis_tuser} = dout;
+			{m_axis_tkeep_tmp, m_axis_tdata_tmp, m_axis_tlast, m_axis_tuser} = dout;
 		end
 		default: begin
 			m_axis_tvalid = 1'b0;
-			{m_axis_tkeep, m_axis_tdata, m_axis_tlast, m_axis_tuser} = 74'b0;
 		end
 	endcase
 end
+always_comb m_axis_tkeep = reverse8(m_axis_tkeep_tmp);
+always_comb m_axis_tdata = endian_conv64(m_axis_tdata_tmp);
 
 endmodule
 
