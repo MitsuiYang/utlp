@@ -13,7 +13,7 @@ module eth_txarb (
 	output logic        fifo1_rd_en,
 
 	// data write
-	output logic [73:0] din,
+	output logic [75:0] din,
 	input  logic        full,
 	output logic        wr_en
 );
@@ -23,14 +23,18 @@ wire fifo1_tlast = fifo1_dout[1];
 
 enum logic [1:0] { IDLE, FIFO0, FIFO1 } state;
 logic wr_en_shift;
+enum logic [1:0] { CQ, CC, RQ, RC } pktdir;
+//logic [9:0] pktlen; // DWord
 always_ff @(posedge clk) begin
 	if (rst) begin
 		state       <= IDLE;
 		fifo0_rd_en <= 1'b0;
 		fifo1_rd_en <= 1'b0;
-		din         <= 74'b0;
+		din         <= 76'b0;
 		wr_en       <= 1'b0;
 		wr_en_shift <= 1'b0;
+		pktdir      <= CQ;
+//		pktlen      <= 10'b0;
 	end else begin
 		wr_en <= wr_en_shift;
 
@@ -39,16 +43,20 @@ always_ff @(posedge clk) begin
 				fifo0_rd_en <= 1'b0;
 				fifo1_rd_en <= 1'b0;
 				wr_en_shift <= 1'b0;
+				pktdir      <= CQ;
+//				pktlen      <= 10'b0;
 				if (!full && !fifo0_empty) begin
+					pktdir <= CQ;
 					state <= FIFO0;
 				end else if (!full && !fifo1_empty) begin
+					pktdir <= CC;
 					state <= FIFO1;
 				end
 			end
 			FIFO0: begin
 				fifo0_rd_en <= 1'b1;
 				wr_en_shift <= 1'b1;
-				din         <= fifo0_dout;
+				din         <= {pktdir, fifo0_dout};
 				if (fifo0_tlast) begin
 					fifo0_rd_en <= 1'b0;
 					wr_en_shift <= 1'b0;
@@ -58,7 +66,7 @@ always_ff @(posedge clk) begin
 			FIFO1: begin
 				fifo1_rd_en <= 1'b1;
 				wr_en_shift <= 1'b1;
-				din         <= fifo1_dout;
+				din         <= {pktdir, fifo1_dout};
 				if (fifo1_tlast) begin
 					fifo1_rd_en <= 1'b0;
 					wr_en_shift <= 1'b0;

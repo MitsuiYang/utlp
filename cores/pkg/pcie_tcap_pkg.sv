@@ -1,31 +1,31 @@
-/* PCIe TLP global header for pemu (tcap)
+/* PCIe TLP capture header: Byte 6
  * Byte 6
  *
- * 15               7             0
+ *  2               1             0B
  * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
- * | Ver |Dir|Rsrvd|               |
- * +-+-+-+-+-+-+-+-+               |
- * |           Timestamp           |
+ * |DIR|        Reserved           |
+ * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-|
+ * |            Sequence           |
  * |                               |
  * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
- *
+ * Direction, 2bit
+ * Reserved, 14bit
+ * Sequence, 32bit
  */
 
 package pcie_tcap_pkg;
 	parameter PCIE_TCAP_LEN = 6;
 
 	typedef struct packed {
-		bit [ 2:0] ver;
 		bit [ 1:0] dir;
-		bit [ 2:0] rsrv;
-		bit [39:0] ts;
+		bit [13:0] rsrv;
+		bit [31:0] seq;
 	} pcie_tcaphdr;
 
 	function pcie_tcaphdr tcap_init();
-		tcap_init.ver = 3'b001;
 		tcap_init.dir = 0;
 		tcap_init.rsrv = 0;
-		tcap_init.ts = 0;
+		tcap_init.seq = 0;
 	endfunction :tcap_init
 
 endpackage :pcie_tcap_pkg

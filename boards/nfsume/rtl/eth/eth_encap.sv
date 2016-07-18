@@ -24,7 +24,7 @@ module eth_encap #(
 
 	// TLP packet (FIFO read)
 	output logic        rd_en,
-	input  logic [73:0] dout,
+	input  logic [75:0] dout,
 	input  logic        empty,
 
 	// Eth+IP+UDP + TLP packet
@@ -88,8 +88,7 @@ always_comb begin
 	tx_pkt.hdr.udp.len = frame_len - ETH_HDR_LEN - IP_HDR_DEFLEN;
 	tx_pkt.hdr.udp.check = 0;
 
-	tx_pkt.hdr.tcap.ver = 3'b001;
-	tx_pkt.hdr.tcap.dir = 0;
+//	tx_pkt.hdr.tcap.dir = 0;
 	tx_pkt.hdr.tcap.rsrv = 0;
 //	tx_pkt.hdr.tcap.ts = 40'haaaaaaaaaa;    // temporary
 end
@@ -97,7 +96,8 @@ end
 
 enum logic [1:0] { TX_IDLE, TX_HDR, TX_DATA } tx_state = TX_IDLE, tx_state_next;
 logic [15:0] tx_count, tx_count_next;
-logic [39:0] tcap_seq, tcap_seq_next;
+logic [31:0] tcap_seq, tcap_seq_next;
+//enum logic [1:0] { CQ, CC, RQ, RC } pktdir;
 always_ff @(posedge clk156) begin
 	if (sys_rst) begin
 		tx_state <= TX_IDLE;
@@ -145,7 +145,8 @@ always_comb begin
 			tx_state_next = TX_IDLE;
 	endcase
 end
-always_comb tx_pkt.hdr.tcap.ts = tcap_seq;
+always_comb tx_pkt.hdr.tcap.seq = tcap_seq;
+always_comb tx_pkt.hdr.tcap.dir = dout[75:74];
 
 logic [7:0] m_axis_tkeep_tmp;
 logic [63:0] m_axis_tdata_tmp;
@@ -171,7 +172,7 @@ always_comb begin
 		end
 		TX_DATA: begin
 			m_axis_tvalid = 1'b1;
-			{m_axis_tkeep_tmp, m_axis_tdata_tmp, m_axis_tlast, m_axis_tuser} = dout;
+			{m_axis_tkeep_tmp, m_axis_tdata_tmp, m_axis_tlast, m_axis_tuser} = dout[73:0];
 		end
 		default: begin
 			m_axis_tvalid = 1'b0;

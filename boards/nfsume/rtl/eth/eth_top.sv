@@ -152,7 +152,7 @@ pcie2eth_fifo1 pcie2eth_fifo1_ins (
 );
 
 // eth_txarb
-logic [73:0] out_din;
+logic [75:0] out_din;
 logic out_wr_en;
 logic out_full;
 eth_txarb eth_txarb0 (
@@ -176,7 +176,7 @@ eth_txarb eth_txarb0 (
 );
 
 // arb2encap_fifo
-logic [73:0] out_dout;
+logic [75:0] out_dout;
 logic out_rd_en;
 logic out_empty;
 arb2encap_fifo arb2encap_fifo_ins (
