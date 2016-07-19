@@ -94,7 +94,7 @@ always_comb begin
 end
 
 
-enum logic [1:0] { TX_IDLE, TX_HDR, TX_DATA } tx_state = TX_IDLE, tx_state_next;
+enum logic [1:0] { TX_IDLE, TX_HDR, TX_DATA, TX_END } tx_state = TX_IDLE, tx_state_next;
 logic [15:0] tx_count, tx_count_next;
 logic [31:0] tcap_seq, tcap_seq_next;
 //enum logic [1:0] { CQ, CC, RQ, RC } pktdir;
@@ -137,9 +137,12 @@ always_comb begin
 			if (m_axis_tready) begin
 				rd_en = 1;
 				if (m_axis_tlast) begin
-					tx_state_next = TX_IDLE;
+					tx_state_next = TX_END;
 				end
 			end
+		end
+		TX_END: begin
+			tx_state_next = TX_IDLE;
 		end
 		default:
 			tx_state_next = TX_IDLE;

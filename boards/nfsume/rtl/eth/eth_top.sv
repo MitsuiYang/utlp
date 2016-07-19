@@ -248,7 +248,7 @@ axi_10g_ethernet_0 axi_10g_ethernet_0_ins (
 	.signal_detect(!ETH1_RX_LOS),
 	.tx_disable(ETH1_TX_DISABLE),
 	.tx_fault(ETH1_TX_FAULT),
-	.tx_ifg_delay(8'd0),
+	.tx_ifg_delay(8'd8),
 	.tx_statistics_vector(),
 	.txn(ETH1_RX_N),
 	.txp(ETH1_RX_P),
