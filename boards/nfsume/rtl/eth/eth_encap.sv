@@ -24,7 +24,7 @@ module eth_encap #(
 
 	// TLP packet (FIFO read)
 	output logic        rd_en,
-	input  logic [75:0] dout,
+	input  logic [82:0] dout,
 	input  logic        empty,
 
 	// Eth+IP+UDP + TLP packet
@@ -149,10 +149,11 @@ always_comb begin
 	endcase
 end
 always_comb tx_pkt.hdr.tcap.seq = tcap_seq;
-always_comb tx_pkt.hdr.tcap.dir = dout[75:74];
+always_comb tx_pkt.hdr.tcap.dir = dout[82:81];
 
 logic [7:0] m_axis_tkeep_tmp;
 logic [63:0] m_axis_tdata_tmp;
+logic [7:0] tmp_tuser;
 always_comb begin
 	m_axis_tkeep_tmp = 8'b0;
 	m_axis_tdata_tmp = 64'b0;
@@ -175,7 +176,9 @@ always_comb begin
 		end
 		TX_DATA: begin
 			m_axis_tvalid = 1'b1;
-			{m_axis_tkeep_tmp, m_axis_tdata_tmp, m_axis_tlast, m_axis_tuser} = dout[73:0];
+			{m_axis_tkeep_tmp, m_axis_tdata_tmp} = dout[80:9];
+			tmp_tuser = dout[8:1];
+			m_axis_tlast = dout[0];
 		end
 		default: begin
 			m_axis_tvalid = 1'b0;

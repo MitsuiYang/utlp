@@ -90,7 +90,7 @@ eth_mac_conf eth_mac_conf0(.*);
 // eth_tlptap (PCIe to FIFO)
 logic fifo0_wr_en, fifo0_rd_en;
 logic fifo0_full, fifo0_empty;
-logic [73:0] fifo0_din, fifo0_dout;
+logic [80:0] fifo0_din, fifo0_dout;
 eth_tlptap eth_tlptap0 (
 	// data in(tap)
 	.s_axis_tvalid(m_axis_cq_tvalid_reg),
@@ -98,7 +98,7 @@ eth_tlptap eth_tlptap0 (
 	.s_axis_tdata (m_axis_cq_tdata_reg),
 	.s_axis_tkeep (m_axis_cq_tkeep_reg),
 	.s_axis_tlast (m_axis_cq_tlast_reg),
-	.s_axis_tuser (m_axis_cq_tuser_reg[0]),
+	.s_axis_tuser (m_axis_cq_tuser_reg[7:0]),
 	// FIFO write
 	.wr_en(fifo0_wr_en),
 	.din(fifo0_din),
@@ -108,7 +108,7 @@ eth_tlptap eth_tlptap0 (
 // eth_tlptap (PCIe to FIFO)
 logic fifo1_wr_en, fifo1_rd_en;
 logic fifo1_full, fifo1_empty;
-logic [73:0] fifo1_din, fifo1_dout;
+logic [80:0] fifo1_din, fifo1_dout;
 eth_tlptap eth_tlptap1 (
 	// data in(tap)
 	.s_axis_tvalid(s_axis_cc_tvalid_reg),
@@ -116,7 +116,7 @@ eth_tlptap eth_tlptap1 (
 	.s_axis_tdata (s_axis_cc_tdata_reg),
 	.s_axis_tkeep (s_axis_cc_tkeep_reg),
 	.s_axis_tlast (s_axis_cc_tlast_reg),
-	.s_axis_tuser (s_axis_cc_tuser_reg[0]),
+	.s_axis_tuser (8'b0),
 	// FIFO write
 	.wr_en(fifo1_wr_en),
 	.din(fifo1_din),
@@ -152,7 +152,7 @@ pcie2eth_fifo1 pcie2eth_fifo1_ins (
 );
 
 // eth_txarb
-logic [75:0] out_din;
+logic [82:0] out_din;
 logic out_wr_en;
 logic out_full;
 eth_txarb eth_txarb0 (
@@ -176,7 +176,7 @@ eth_txarb eth_txarb0 (
 );
 
 // arb2encap_fifo
-logic [75:0] out_dout;
+logic [82:0] out_dout;
 logic out_rd_en;
 logic out_empty;
 arb2encap_fifo arb2encap_fifo_ins (

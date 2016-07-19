@@ -6,14 +6,14 @@ module pcie2eth_fifo1 (
 	input  wire rd_en,
 	input  wire wr_en,
 
-	input  wire [73:0] din,
-	output wire [73:0] dout,
+	input  wire [80:0] din,
+	output wire [80:0] dout,
 	output wire empty,
 	output wire full
 );
 
 asfifo #(
-	.DATA_WIDTH(74),
+	.DATA_WIDTH(81),
 	.ADDRESS_WIDTH(7)
 ) asfifo1 (
 	.*
