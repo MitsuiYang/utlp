@@ -138,7 +138,7 @@ pcie2eth_fifo0 pcie2eth_fifo0_ins (
 );
 
 // pcie2eth_fifo1
-pcie2eth_fifo1 pcie2eth_fifo1_ins (
+pcie2eth_fifo0 pcie2eth_fifo1_ins (
 	.rst(sys_rst),
 	.wr_clk(user_clk),    // data in (pcie)
 	.rd_clk(clk156),      // data out(eth)
